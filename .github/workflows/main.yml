@@ -1,0 +1,12 @@
+name: Auto Create Folder
+on: workflow_dispatch
+jobs:
+  create-folder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          mkdir -p test-folder && touch test-folder/.gitkeep
+          git add . && git commit -m "新建test-folder" && git push
