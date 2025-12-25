@@ -1,1 +1,58 @@
-<html><body>测试</body></html>
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>墨昼 (MeZhou-Lxy) | 个人主页</title>
+  <style>
+    * {margin: 0;padding: 0;box-sizing: border-box;font-family: "Microsoft YaHei","PingFang SC",sans-serif;transition: all 0.3s ease;}
+    :root {--bg-main: #f5f7fa;--bg-card: #ffffff;--text-main: #2d3748;--text-secondary: #718096;--accent: #2563eb;--accent-dark: #1a365d;--shadow: 0 4px 12px rgba(0,0,0,0.08);--ink-bg: linear-gradient(135deg,#f8f9fa,#e8f4f8);}
+    .dark-mode {--bg-main: #121212;--bg-card: #1e1e1e;--text-main: #e2e8f0;--text-secondary: #a0aec0;--accent: #60a5fa;--accent-dark: #3182ce;--shadow: 0 4px 12px rgba(0,0,0,0.3);--ink-bg: linear-gradient(135deg,#1a1a2e,#16213e);}
+    body {background: var(--ink-bg);color: var(--text-main);min-height: 100vh;padding: 20px 15px;}
+    .container {max-width: 800px;margin: 0 auto;padding: 20px 0;}
+    .profile-card {background: var(--bg-card);border-radius: 20px;padding: 40px 30px;box-shadow: var(--shadow);text-align: center;margin-bottom: 30px;position: relative;overflow: hidden;animation: fadeIn 0.6s ease-in-out;}
+    .avatar {width: 120px;height: 120px;border-radius: 50%;border: 4px solid var(--accent);margin: 0 auto 20px;object-fit: cover;background: #f0f0f0;}
+    .avatar:hover{transform:scale(1.05);}
+    .nickname {font-size: 32px;font-weight: 700;color: var(--accent-dark);margin-bottom: 8px;}
+    .username {font-size: 16px;color: var(--text-secondary);margin-bottom: 20px;}
+    .bio {font-size: 18px;line-height: 1.6;max-width: 600px;margin: 0 auto 30px;color: var(--text-main);}
+    .counter {font-size:14px;color:var(--text-secondary);margin-bottom:25px;padding:8px 15px;background:var(--bg-main);border-radius:8px;display:inline-block;}
+    .link-group {display: flex;flex-direction: column;gap: 12px;max-width: 500px;margin: 0 auto;}
+    .link-btn {display: block;padding:14px 20px;background:var(--bg-main);color:var(--accent);border:2px solid var(--accent);border-radius:12px;text-decoration:none;font-size:16px;font-weight:500;transition:all 0.2s;touch-action: manipulation;position:relative;overflow:hidden;}
+    .link-btn:hover {background:var(--accent);color:white;transform:translateY(-2px);box-shadow:0 6px 12px rgba(37,99,235,0.2);}
+    .link-btn::after {content:"";position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;background:rgba(255,255,255,0.3);transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s;}
+    .link-btn:active::after {width:300px;height:300px;opacity:0;}
+    .theme-toggle {position:fixed;top:20px;right:20px;width:44px;height:44px;border-radius:50%;border:none;background:var(--bg-card);color:var(--accent);font-size:20px;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease;}
+    .theme-toggle:hover{transform:rotate(15deg);}
+    .footer {text-align:center;margin-top:40px;font-size:14px;color:var(--text-secondary);padding:20px 0;}
+    @keyframes fadeIn {from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    @media (max-width:600px) {.profile-card{padding:30px 20px;}.nickname{font-size:26px;}.bio{font-size:16px;}}
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle">🌙</button>
+  <div class="container">
+    <div class="profile-card">
+      <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEOHGNpTBB1BdDfpvKBN76CnoE3GZg_LAACtCUAAqnnYVZhecQevxrIMTYE.jpeg" alt="墨昼的头像" class="avatar">
+      <h1 class="nickname">墨昼</h1>
+      <p class="username">MeZhou-Lxy</p>
+      <div class="counter">👁️ 总访问量:<span id="busuanzi_value_site_pv"></span> | 独立访客:<span id="busuanzi_value_site_uv"></span></div>
+      <p class="bio">饮四季韶华，赊红尘白首…….✨</p>
+      <div class="link-group">
+        <a href="https://github.com/MeZhou-Lxy" target="_blank" class="link-btn">🔗 我的GitHub仓库</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer">© 2025 墨昼 (MeZhou-Lxy) | 由 GitHub Pages 提供支持</div>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');const body = document.body;
+    if(localStorage.getItem('darkMode')==='true'){body.classList.add('dark-mode');themeToggle.textContent='☀️';}
+    themeToggle.addEventListener('click',()=>{const isDark=body.classList.toggle('dark-mode');localStorage.setItem('darkMode',isDark);themeToggle.textContent=isDark?'☀️':'🌙';});
+  </script>
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+</body>
+</html>
