@@ -1,5 +1,4 @@
 # MeZhoy-Lxy.github.io
-# MeZhoy-Lxy.github.io
 > 个人GitHub Pages静态网页仓库，用于网页部署与资源托管
 
 ## 仓库介绍
