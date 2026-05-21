@@ -1,337 +1,587 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>墨昼 | MeZhou</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #e5e5e5;
-            overflow-x: hidden;
-        }
-        .serif {
-            font-family: 'Noto Serif SC', serif;
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .ink-wash {
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0%, transparent 70%);
-        }
-        .hover-lift {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .hover-lift:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        .music-wave {
-            animation: wave 2s ease-in-out infinite;
-        }
-        @keyframes wave {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.5); }
-        }
-        .cursor-trail {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s;
-        }
-        .section-fade {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        .section-fade.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
+  <title>专注时钟 · 轻量任务清单</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f7f3e8 0%, #f0e9da 100%);
+      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      margin: 0;
+      box-shadow: inset 0 0 80px rgba(160, 120, 80, 0.1);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 580px;
+      background: rgba(255, 250, 245, 0.85);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      background: #fffef9;
+      border-radius: 3.5rem;
+      box-shadow: 0 25px 50px -10px rgba(80, 50, 20, 0.25), 
+                  0 0 0 1px rgba(200, 160, 110, 0.3),
+                  inset 0 2px 10px rgba(255, 255, 255, 0.8);
+      padding: 2.2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      transition: all 0.2s ease;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0.8rem;
+      }
+      .container {
+        padding: 1.8rem 1.2rem;
+        border-radius: 2.5rem;
+      }
+    }
+
+    /* 时钟卡片 */
+    .timer-section {
+      text-align: center;
+    }
+
+    .timer-display {
+      font-size: 5.2rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 3px;
+      color: #4b3a2b;
+      background: #f9efe2;
+      border-radius: 3rem;
+      padding: 0.5rem 1.2rem;
+      display: inline-block;
+      margin: 0 auto 1rem;
+      box-shadow: inset 0 6px 12px rgba(140, 100, 60, 0.15), 0 10px 15px -5px rgba(100, 70, 30, 0.3);
+      background: linear-gradient(180deg, #fdf7f0 0%, #f5e7d6 100%);
+      border: 1px solid #e7cfb0;
+      line-height: 1.2;
+    }
+
+    .mode-label {
+      font-size: 1.1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #8b7355;
+      background: #efe0cd;
+      display: inline-block;
+      padding: 0.4rem 1.4rem;
+      border-radius: 2rem;
+      margin-bottom: 1rem;
+      backdrop-filter: blur(5px);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9rem;
+      margin: 1.2rem 0 0.8rem;
+    }
+
+    button {
+      background: #f5ede1;
+      border: none;
+      border-radius: 2.5rem;
+      padding: 0.8rem 1.6rem;
+      font-size: 1rem;
+      font-weight: 550;
+      color: #4f3b28;
+      background: #ffffff;
+      box-shadow: 0 5px 15px rgba(140, 100, 50, 0.15), 0 0 0 1px #ddceb5;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      backdrop-filter: blur(10px);
+      letter-spacing: 0.4px;
+    }
+
+    button:hover {
+      background: #fff7ed;
+      box-shadow: 0 8px 18px rgba(150, 100, 40, 0.25), 0 0 0 1.5px #c9aa7a;
+      transform: translateY(-1px);
+      color: #2f2418;
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 8px rgba(120, 80, 30, 0.3);
+    }
+
+    button.primary {
+      background: #dbb88c;
+      color: #2d2416;
+      box-shadow: 0 8px 18px rgba(160, 110, 50, 0.35);
+      border: 1px solid #b68b5c;
+      font-weight: 600;
+    }
+
+    button.primary:hover {
+      background: #e6c7a2;
+    }
+
+    .mode-buttons {
+      display: flex;
+      gap: 0.5rem;
+      background: #f2e7da;
+      padding: 0.4rem;
+      border-radius: 3rem;
+      box-shadow: inset 0 2px 6px rgba(120, 70, 20, 0.2);
+    }
+
+    .mode-btn {
+      padding: 0.5rem 1.2rem;
+      box-shadow: none;
+      border-radius: 2.5rem;
+      background: transparent;
+      border: none;
+      font-weight: 500;
+      color: #5f4a32;
+    }
+
+    .mode-btn.active {
+      background: white;
+      box-shadow: 0 4px 10px rgba(150, 110, 50, 0.3);
+      font-weight: 600;
+      color: #3b2c1a;
+    }
+
+    /* 任务区域 */
+    .task-section {
+      background: #faf5ed;
+      border-radius: 2.5rem;
+      padding: 1.5rem 1.5rem 1.2rem;
+      box-shadow: inset 0 2px 10px rgba(200, 160, 110, 0.2), 0 10px 20px -8px rgba(90, 50, 15, 0.25);
+    }
+
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .task-header h2 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #4f3b28;
+      letter-spacing: 0.5px;
+    }
+
+    .add-task-form {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .add-task-form input {
+      flex: 1;
+      padding: 0.8rem 1.2rem;
+      border: 1px solid #ddc7aa;
+      border-radius: 2rem;
+      background: #fffdf9;
+      font-size: 0.95rem;
+      outline: none;
+      box-shadow: inset 0 2px 5px rgba(150, 120, 70, 0.1);
+      transition: 0.2s;
+      color: #3e3322;
+    }
+
+    .add-task-form input:focus {
+      border-color: #c49a6c;
+      box-shadow: 0 0 0 3px rgba(200, 150, 90, 0.25);
+    }
+
+    .task-list {
+      list-style: none;
+      max-height: 240px;
+      overflow-y: auto;
+      padding-right: 0.3rem;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.7rem 0.4rem;
+      border-bottom: 1px solid #eadbc8;
+      transition: 0.15s;
+      color: #4a3926;
+    }
+
+    .task-item:last-child {
+      border-bottom: none;
+    }
+
+    .task-checkbox {
+      width: 1.4rem;
+      height: 1.4rem;
+      accent-color: #b68b5c;
+      cursor: pointer;
+      transform: scale(1);
+      flex-shrink: 0;
+    }
+
+    .task-text {
+      flex: 1;
+      font-size: 1.05rem;
+      word-break: break-word;
+    }
+
+    .task-text.completed {
+      text-decoration: line-through;
+      color: #b9a48b;
+      opacity: 0.75;
+    }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0.3rem 0.7rem;
+      font-size: 1.2rem;
+      color: #b2977a;
+      border-radius: 2rem;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #f5ede3;
+    }
+
+    .delete-btn:hover {
+      background: #f0d9c2;
+      color: #a0582c;
+      box-shadow: 0 2px 8px rgba(160, 100, 30, 0.3);
+    }
+
+    .progress-text {
+      font-size: 0.9rem;
+      color: #7a684e;
+      margin-top: 0.6rem;
+      text-align: right;
+    }
+
+    .reset-small {
+      font-size: 0.9rem;
+      padding: 0.5rem 1.2rem;
+    }
+  </style>
 </head>
-<body class="antialiased selection:bg-purple-500 selection:text-white">
+<body>
+  <div class="container">
+    <!-- 专注时钟部分 -->
+    <div class="timer-section">
+      <div class="mode-label" id="modeDisplay">专注模式</div>
+      <div class="timer-display" id="timerDisplay">25:00</div>
+      
+      <div class="mode-buttons">
+        <button id="modeFocus" class="mode-btn active">🍅 专注</button>
+        <button id="modeShortBreak" class="mode-btn">☕ 短休</button>
+        <button id="modeLongBreak" class="mode-btn">🌿 长休</button>
+      </div>
 
-    <!-- 导航栏 -->
-    <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold serif tracking-widest text-white">墨昼</div>
-            <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-400">
-                <a href="#home" class="hover:text-white transition-colors">首页</a>
-                <a href="#projects" class="hover:text-white transition-colors">项目</a>
-                <a href="#music" class="hover:text-white transition-colors">音乐</a>
-                <a href="#contact" class="hover:text-white transition-colors">联系</a>
-            </div>
-            <button id="mobile-menu-btn" class="md:hidden text-white">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                </svg>
-            </button>
-        </div>
-        <!-- 移动端菜单 -->
-        <div id="mobile-menu" class="hidden md:hidden bg-black/95 border-t border-white/10">
-            <div class="px-6 py-4 space-y-3">
-                <a href="#home" class="block text-gray-400 hover:text-white">首页</a>
-                <a href="#projects" class="block text-gray-400 hover:text-white">项目</a>
-                <a href="#music" class="block text-gray-400 hover:text-white">音乐</a>
-                <a href="#contact" class="block text-gray-400 hover:text-white">联系</a>
-            </div>
-        </div>
-    </nav>
+      <div class="controls">
+        <button id="startPauseBtn" class="primary">▶ 开始</button>
+        <button id="resetTimerBtn" class="reset-small">↺ 重置</button>
+      </div>
+    </div>
 
-    <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
-        <div class="absolute inset-0 ink-wash"></div>
-        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"></div>
-        
-        <div class="relative z-10 text-center px-6 max-w-4xl mx-auto section-fade">
-            <h1 class="text-6xl md:text-8xl font-bold serif mb-6 tracking-tight">
-                <span class="gradient-text">墨</span>昼
-            </h1>
-            <p class="text-xl md:text-2xl text-gray-400 mb-8 font-light tracking-wide">
-                在代码与旋律之间<br>
-                <span class="text-sm md:text-base opacity-60">Between Code and Melody</span>
-            </p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center items-center mt-12">
-                <a href="#projects" class="px-8 py-3 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition-all hover:scale-105">
-                    查看项目
-                </a>
-                <a href="#music" class="px-8 py-3 border border-white/30 rounded-full font-medium hover:bg-white/10 transition-all">
-                    聆听音乐
-                </a>
-            </div>
-        </div>
-        
-        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-            </svg>
-        </div>
-    </section>
+    <!-- 极简任务清单 -->
+    <div class="task-section">
+      <div class="task-header">
+        <h2>📋 今日待办</h2>
+      </div>
+      
+      <div class="add-task-form">
+        <input type="text" id="taskInput" placeholder="写下一个任务..." autocomplete="off" />
+        <button id="addTaskBtn" style="padding:0.8rem 1.4rem;">➕ 添加</button>
+      </div>
 
-    <!-- 项目展示 -->
-    <section id="projects" class="py-24 px-6 relative">
-        <div class="max-w-6xl mx-auto">
-            <div class="section-fade mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold serif mb-4">代码仓库</h2>
-                <p class="text-gray-400">GitHub Projects & Contributions</p>
-            </div>
+      <ul class="task-list" id="taskList">
+        <!-- 动态任务渲染 -->
+      </ul>
+      
+      <div class="progress-text" id="progressText">完成 0 / 0</div>
+    </div>
+  </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- GitHub 卡片 -->
-                <div class="section-fade bg-white/5 border border-white/10 rounded-2xl p-8 hover-lift group cursor-pointer" onclick="window.open('https://mezhou-lxy.github.io/MeZhou-Lxy.github.io/', '_blank')">
-                    <div class="flex items-start justify-between mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-gray-700 to-gray-900 rounded-xl flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </div>
-                        <svg class="w-5 h-5 text-gray-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2 group-hover:text-purple-400 transition-colors">MeZhou-Lxy.github.io</h3>
-                    <p class="text-gray-400 mb-4">个人主页与项目展示站点，记录技术探索与创意实现。</p>
-                    <div class="flex gap-2">
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-300">HTML</span>
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-300">CSS</span>
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-300">JavaScript</span>
-                    </div>
-                </div>
+  <script>
+    (function() {
+      // ---------- 时钟状态 ----------
+      const modes = {
+        focus: { name: '专注', duration: 25 * 60, display: '专注模式' },
+        shortBreak: { name: '短休', duration: 5 * 60, display: '短休模式' },
+        longBreak: { name: '长休', duration: 15 * 60, display: '长休模式' }
+      };
 
-                <!-- 占位项目卡片 -->
-                <div class="section-fade bg-white/5 border border-white/10 rounded-2xl p-8 hover-lift">
-                    <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">更多项目</h3>
-                    <p class="text-gray-400 mb-4">持续构建中... 探索更多代码与创意的结合。</p>
-                    <div class="flex gap-2">
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-300">Coming Soon</span>
-                    </div>
-                </div>
-            </div>
+      let currentMode = 'focus';        // 'focus', 'shortBreak', 'longBreak'
+      let timeLeft = modes.focus.duration; // 秒
+      let timerInterval = null;
+      let isRunning = false;
 
-            <div class="mt-12 text-center section-fade">
-                <a href="https://github.com/MeZhou-Lxy" target="_blank" class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors border-b border-transparent hover:border-white pb-1">
-                    访问 GitHub 主页
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                    </svg>
-                </a>
-            </div>
-        </div>
-    </section>
+      // DOM 元素
+      const timerDisplay = document.getElementById('timerDisplay');
+      const modeDisplay = document.getElementById('modeDisplay');
+      const startPauseBtn = document.getElementById('startPauseBtn');
+      const resetTimerBtn = document.getElementById('resetTimerBtn');
+      const modeFocusBtn = document.getElementById('modeFocus');
+      const modeShortBreakBtn = document.getElementById('modeShortBreak');
+      const modeLongBreakBtn = document.getElementById('modeLongBreak');
 
-    <!-- 音乐区域 -->
-    <section id="music" class="py-24 px-6 bg-white/5 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-purple-900/20 to-transparent"></div>
-        
-        <div class="max-w-6xl mx-auto relative z-10">
-            <div class="section-fade mb-16 flex flex-col md:flex-row justify-between items-end">
-                <div>
-                    <h2 class="text-4xl md:text-5xl font-bold serif mb-4">音乐收藏</h2>
-                    <p class="text-gray-400">网易云音乐歌单分享</p>
-                </div>
-                <div class="flex gap-1 mt-4 md:mt-0">
-                    <div class="w-1 h-8 bg-purple-500 music-wave" style="animation-delay: 0s"></div>
-                    <div class="w-1 h-8 bg-purple-500 music-wave" style="animation-delay: 0.1s"></div>
-                    <div class="w-1 h-8 bg-purple-500 music-wave" style="animation-delay: 0.2s"></div>
-                    <div class="w-1 h-8 bg-purple-500 music-wave" style="animation-delay: 0.3s"></div>
-                    <div class="w-1 h-8 bg-purple-500 music-wave" style="animation-delay: 0.4s"></div>
-                </div>
-            </div>
+      // 任务相关
+      const taskInput = document.getElementById('taskInput');
+      const addTaskBtn = document.getElementById('addTaskBtn');
+      const taskList = document.getElementById('taskList');
+      const progressText = document.getElementById('progressText');
 
-            <div class="section-fade bg-gradient-to-br from-red-900/20 to-black border border-white/10 rounded-3xl p-8 md:p-12 hover-lift">
-                <div class="flex flex-col md:flex-row gap-8 items-center">
-                    <div class="w-48 h-48 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center shadow-2xl flex-shrink-0">
-                        <svg class="w-24 h-24 text-white/80" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                        </svg>
-                    </div>
-                    
-                    <div class="flex-1 text-center md:text-left">
-                        <h3 class="text-3xl font-bold mb-2">我喜欢的音乐</h3>
-                        <p class="text-gray-400 mb-6">歌单 ID: 716386707</p>
-                        <p class="text-gray-300 mb-8 leading-relaxed">
-                            音乐是另一种形式的代码，用旋律和节奏编织情感。在这里分享我的私人歌单，<br class="hidden md:block">
-                            或许我们能找到共鸣的频率。
-                        </p>
-                        
-                        <a href="https://y.music.163.com/m/playlist?id=716386707" target="_blank" 
-                           class="inline-flex items-center gap-3 px-8 py-4 bg-[#C20C0C] hover:bg-[#A00A0A] text-white rounded-full font-medium transition-all hover:scale-105 group">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8 5v14l11-7z"/>
-                            </svg>
-                            打开网易云音乐
-                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
+      // 任务数据存储
+      let tasks = [];
 
-            <!-- 音乐可视化装饰 -->
-            <div class="mt-12 grid grid-cols-6 gap-2 h-16 opacity-30">
-                <div class="bg-gradient-to-t from-purple-600 to-transparent rounded-t-full animate-pulse" style="animation-delay: 0s; height: 40%"></div>
-                <div class="bg-gradient-to-t from-purple-600 to-transparent rounded-t-full animate-pulse" style="animation-delay: 0.2s; height: 70%"></div>
-                <div class="bg-gradient-to-t from-purple-600 to-transparent rounded-t-full animate-pulse" style="animation-delay: 0.4s; height: 100%"></div>
-                <div class="bg-gradient-to-t from-purple-600 to-transparent rounded-t-full animate-pulse" style="animation-delay: 0.1s; height: 60%"></div>
-                <div class="bg-gradient-to-t from-purple-600 to-transparent rounded-t-full animate-pulse" style="animation-delay: 0.3s; height: 80%"></div>
-                <div class="bg-gradient-to-t from-purple-600 to-transparent rounded-t-full animate-pulse" style="animation-delay: 0.5s; height: 50%"></div>
-            </div>
-        </div>
-    </section>
+      // ---------- 工具函数 ----------
+      function formatTime(seconds) {
+        if (seconds < 0) seconds = 0;
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
 
-    <!-- 联系区域 -->
-    <section id="contact" class="py-24 px-6">
-        <div class="max-w-4xl mx-auto text-center section-fade 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </div>
-                        <svg class="w-5 h-5 text-gray-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2 group-hover:text-purple-400 transition-colors">MeZhou-Lxy.github.io</h3>
-                    <p class="text-gray-400 mb-4">个人主页与项目展示站点，记录技术探索与创意实现。</p>
-                    <div class="flex gap-2">
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-300">HTML</span>
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-300">CSS</span>
-                        <span class="px-3 py-1 bg-white/10 rounded-full text-xs text-gray-300">JavaScript</span>
-                    </div>
-                </div>
+      function updateTimerDisplay() {
+        timerDisplay.textContent = formatTime(timeLeft);
+      }
 
-                
-                    
-    </footer>
-
-    <script>
-        // 移动端菜单切换
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // 滚动显示动画
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.section-fade').forEach((el) => observer.observe(el));
-
-        // 平滑滚动
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    // 关闭移动端菜单
-                    mobileMenu.classList.add('hidden');
-                }
-            });
-        });
-
-        // 鼠标跟随效果
-        const cursor = document.createElement('div');
-        cursor.className = 'cursor-trail hidden md:block';
-        document.body.appendChild(cursor);
-
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
-
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        function animate() {
-            cursorX += (mouseX - cursorX) * 0.1;
-            cursorY += (mouseY - cursorY) * 0.1;
-            cursor.style.left = cursorX - 10 + 'px';
-            cursor.style.top = cursorY - 10 + 'px';
-            requestAnimationFrame(animate);
+      function clearTimerInterval() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
         }
-        animate();
+      }
 
-        // 鼠标悬停时放大效果
-        document.querySelectorAll('a, button').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.style.transform = 'scale(2)';
-                cursor.style.borderColor = 'rgba(168, 85, 247, 0.5)';
-            });
-            el.addEventListener('mouseleave', () => {
-                cursor.style.transform = 'scale(1)';
-                cursor.style.borderColor = 'rgba(255,255,255,0.3)';
-            });
+      function stopTimer() {
+        clearTimerInterval();
+        isRunning = false;
+        startPauseBtn.innerHTML = '▶ 开始';
+      }
+
+      // 切换到指定模式 (不自动开始)
+      function switchMode(modeKey) {
+        if (currentMode === modeKey && isRunning) {
+          // 如果相同模式且正在运行，询问是否重启？这里设计为不自动重置，保留运行。但通常模式切换会重置。
+          // 按习惯：切换模式时停止计时并重置为新模式时长。
+        }
+        // 停止任何进行中的计时
+        stopTimer();
+        currentMode = modeKey;
+        timeLeft = modes[modeKey].duration;
+        updateTimerDisplay();
+        modeDisplay.textContent = modes[modeKey].display;
+
+        // 更新模式按钮激活样式
+        [modeFocusBtn, modeShortBreakBtn, modeLongBreakBtn].forEach(btn => btn.classList.remove('active'));
+        if (modeKey === 'focus') modeFocusBtn.classList.add('active');
+        else if (modeKey === 'shortBreak') modeShortBreakBtn.classList.add('active');
+        else if (modeKey === 'longBreak') modeLongBreakBtn.classList.add('active');
+      }
+
+      // 开始/暂停
+      function toggleStartPause() {
+        if (isRunning) {
+          // 暂停
+          stopTimer();
+        } else {
+          // 开始
+          if (timeLeft <= 0) {
+            // 如果时间已经到了，重置为当前模式时长再开始
+            timeLeft = modes[currentMode].duration;
+            updateTimerDisplay();
+          }
+          isRunning = true;
+          startPauseBtn.innerHTML = '⏸️ 暂停';
+          
+          timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+
+            if (timeLeft <= 0) {
+              // 时间到
+              clearTimerInterval();
+              isRunning = false;
+              startPauseBtn.innerHTML = '▶ 开始';
+              timeLeft = 0;
+              updateTimerDisplay();
+              
+              // 简单的浏览器通知提醒 (如果允许)
+              if (Notification && Notification.permission === "granted") {
+                new Notification('⏰ 计时结束', { body: `${modes[currentMode].display} 已完成！` });
+              } else if (Notification && Notification.permission !== "denied") {
+                Notification.requestPermission().then(perm => {
+                  if (perm === "granted") {
+                    new Notification('⏰ 计时结束', { body: `${modes[currentMode].display} 已完成！` });
+                  }
+                });
+              }
+              
+              // 也播放轻微提示音（利用 Web Audio 可选，这里简单用 alert 风格？改为更优雅：短暂显示）
+              alert(`✨ ${modes[currentMode].display} 时间结束！休息一下或开始下一个任务吧。`);
+            }
+          }, 1000);
+        }
+      }
+
+      function resetCurrentTimer() {
+        stopTimer();
+        timeLeft = modes[currentMode].duration;
+        updateTimerDisplay();
+        startPauseBtn.innerHTML = '▶ 开始';
+      }
+
+      // ---------- 任务逻辑 ----------
+      function saveTasksToStorage() {
+        localStorage.setItem('focusClockTasks', JSON.stringify(tasks));
+      }
+
+      function loadTasksFromStorage() {
+        const stored = localStorage.getItem('focusClockTasks');
+        if (stored) {
+          try {
+            tasks = JSON.parse(stored);
+          } catch (e) {
+            tasks = [];
+          }
+        } else {
+          // 默认示例任务
+          tasks = [
+            { id: Date.now() + 1, text: '阅读设计文档', completed: false },
+            { id: Date.now() + 2, text: '完成代码审查', completed: false }
+          ];
+        }
+      }
+
+      function renderTasks() {
+        if (!taskList) return;
+        taskList.innerHTML = '';
+        
+        if (tasks.length === 0) {
+          taskList.innerHTML = '<li style="padding:1rem;text-align:center;color:#b9a68b;">✨ 暂无任务，添加一个吧</li>';
+          updateProgress();
+          return;
+        }
+
+        tasks.forEach(task => {
+          const li = document.createElement('li');
+          li.className = 'task-item';
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.className = 'task-checkbox';
+          checkbox.checked = task.completed;
+          checkbox.addEventListener('change', (e) => {
+            task.completed = e.target.checked;
+            saveTasksToStorage();
+            renderTasks();
+          });
+
+          const span = document.createElement('span');
+          span.className = 'task-text' + (task.completed ? ' completed' : '');
+          span.textContent = task.text;
+
+          const delBtn = document.createElement('button');
+          delBtn.className = 'delete-btn';
+          delBtn.innerHTML = '🗑️';
+          delBtn.setAttribute('aria-label', '删除任务');
+          delBtn.addEventListener('click', () => {
+            tasks = tasks.filter(t => t.id !== task.id);
+            saveTasksToStorage();
+            renderTasks();
+          });
+
+          li.appendChild(checkbox);
+          li.appendChild(span);
+          li.appendChild(delBtn);
+          taskList.appendChild(li);
         });
-    </script>
+
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const total = tasks.length;
+        const completedCount = tasks.filter(t => t.completed).length;
+        progressText.textContent = `完成 ${completedCount} / ${total}`;
+      }
+
+      function addNewTask() {
+        const text = taskInput.value.trim();
+        if (text === '') {
+          alert('请输入任务内容');
+          return;
+        }
+        const newTask = {
+          id: Date.now(),
+          text: text,
+          completed: false
+        };
+        tasks.push(newTask);
+        saveTasksToStorage();
+        taskInput.value = '';
+        renderTasks();
+        // 聚焦回输入框
+        taskInput.focus();
+      }
+
+      // ---------- 事件绑定 ----------
+      // 时钟控制
+      startPauseBtn.addEventListener('click', toggleStartPause);
+      resetTimerBtn.addEventListener('click', resetCurrentTimer);
+
+      modeFocusBtn.addEventListener('click', () => switchMode('focus'));
+      modeShortBreakBtn.addEventListener('click', () => switchMode('shortBreak'));
+      modeLongBreakBtn.addEventListener('click', () => switchMode('longBreak'));
+
+      // 任务操作
+      addTaskBtn.addEventListener('click', addNewTask);
+      taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          addNewTask();
+        }
+      });
+
+      // 初始加载
+      loadTasksFromStorage();
+      renderTasks();
+      // 设置时钟默认显示
+      updateTimerDisplay();
+      modeDisplay.textContent = modes.focus.display;
+      
+      // 请求通知权限（静默）
+      if (window.Notification && Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+
+      // 页面关闭或刷新前清理计时器（好习惯）
+      window.addEventListener('beforeunload', () => {
+        clearTimerInterval();
+      });
+
+    })();
+  </script>
 </body>
 </html>
