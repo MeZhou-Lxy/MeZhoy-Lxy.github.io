@@ -1,587 +1,1159 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0">
-  <title>专注时钟 · 轻量任务清单</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌹 玫瑰花 - 为你绽放</title>
+    <style>
+        :root {
+            --bg-start: #1a0a1e;
+            --bg-mid: #2d1528;
+            --bg-end: #1a0a1e;
+            --rose-outer: #f4a0b5;
+            --rose-mid-outer: #e8819b;
+            --rose-middle: #e45d78;
+            --rose-inner: #d43d5a;
+            --rose-core: #c0392b;
+            --rose-center: #8b1a1a;
+            --stem-green: #4a7c3f;
+            --leaf-green: #5d9b4a;
+            --glow-color: #ffb3c6;
+            --particle-gold: #ffd4a8;
+        }
 
-    body {
-      background: linear-gradient(145deg, #f7f3e8 0%, #f0e9da 100%);
-      font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1.5rem;
-      margin: 0;
-      box-shadow: inset 0 0 80px rgba(160, 120, 80, 0.1);
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .container {
-      width: 100%;
-      max-width: 580px;
-      background: rgba(255, 250, 245, 0.85);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      background: #fffef9;
-      border-radius: 3.5rem;
-      box-shadow: 0 25px 50px -10px rgba(80, 50, 20, 0.25), 
-                  0 0 0 1px rgba(200, 160, 110, 0.3),
-                  inset 0 2px 10px rgba(255, 255, 255, 0.8);
-      padding: 2.2rem 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      transition: all 0.2s ease;
-    }
+        body {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center,
+                    #2d1528 0%,
+                    #1f0d1f 25%,
+                    #1a0a1e 50%,
+                    #100618 75%,
+                    #0a0412 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+            font-family: 'Georgia', 'Times New Roman', 'STSong', 'Songti SC', 'SimSun', 'Noto Serif SC', serif;
+            cursor: default;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+        }
 
-    @media (max-width: 480px) {
-      body {
-        padding: 0.8rem;
-      }
-      .container {
-        padding: 1.8rem 1.2rem;
-        border-radius: 2.5rem;
-      }
-    }
+        /* 背景光晕 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle,
+                    rgba(255, 180, 200, 0.12) 0%,
+                    rgba(255, 150, 170, 0.06) 30%,
+                    rgba(255, 120, 150, 0.02) 50%,
+                    transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: glowPulse 6s ease-in-out infinite;
+        }
 
-    /* 时钟卡片 */
-    .timer-section {
-      text-align: center;
-    }
+        @keyframes glowPulse {
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translate(-50%, -50%) scale(1.25);
+                opacity: 1;
+            }
+            60% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.85;
+            }
+            85% {
+                transform: translate(-50%, -50%) scale(1.35);
+                opacity: 0.65;
+            }
+        }
 
-    .timer-display {
-      font-size: 5.2rem;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 3px;
-      color: #4b3a2b;
-      background: #f9efe2;
-      border-radius: 3rem;
-      padding: 0.5rem 1.2rem;
-      display: inline-block;
-      margin: 0 auto 1rem;
-      box-shadow: inset 0 6px 12px rgba(140, 100, 60, 0.15), 0 10px 15px -5px rgba(100, 70, 30, 0.3);
-      background: linear-gradient(180deg, #fdf7f0 0%, #f5e7d6 100%);
-      border: 1px solid #e7cfb0;
-      line-height: 1.2;
-    }
+        /* Canvas 花瓣层 */
+        #petalCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
 
-    .mode-label {
-      font-size: 1.1rem;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      color: #8b7355;
-      background: #efe0cd;
-      display: inline-block;
-      padding: 0.4rem 1.4rem;
-      border-radius: 2rem;
-      margin-bottom: 1rem;
-      backdrop-filter: blur(5px);
-    }
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
 
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 0.9rem;
-      margin: 1.2rem 0 0.8rem;
-    }
+        /* 玫瑰花整体容器 */
+        .rose-wrapper {
+            position: relative;
+            width: 280px;
+            height: 380px;
+            filter: drop-shadow(0 10px 40px rgba(255, 140, 160, 0.35));
+            transition: filter 0.5s ease;
+            animation: roseFloat 7s ease-in-out infinite;
+        }
 
-    button {
-      background: #f5ede1;
-      border: none;
-      border-radius: 2.5rem;
-      padding: 0.8rem 1.6rem;
-      font-size: 1rem;
-      font-weight: 550;
-      color: #4f3b28;
-      background: #ffffff;
-      box-shadow: 0 5px 15px rgba(140, 100, 50, 0.15), 0 0 0 1px #ddceb5;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.3rem;
-      backdrop-filter: blur(10px);
-      letter-spacing: 0.4px;
-    }
+        @keyframes roseFloat {
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            15% {
+                transform: translateY(-6px) rotate(0.3deg);
+            }
+            30% {
+                transform: translateY(-2px) rotate(-0.2deg);
+            }
+            45% {
+                transform: translateY(-8px) rotate(0.5deg);
+            }
+            60% {
+                transform: translateY(2px) rotate(-0.4deg);
+            }
+            75% {
+                transform: translateY(-4px) rotate(0.15deg);
+            }
+            90% {
+                transform: translateY(0px) rotate(-0.1deg);
+            }
+        }
 
-    button:hover {
-      background: #fff7ed;
-      box-shadow: 0 8px 18px rgba(150, 100, 40, 0.25), 0 0 0 1.5px #c9aa7a;
-      transform: translateY(-1px);
-      color: #2f2418;
-    }
+        .rose-wrapper:hover {
+            filter: drop-shadow(0 15px 55px rgba(255, 130, 155, 0.55));
+        }
 
-    button:active {
-      transform: translateY(1px);
-      box-shadow: 0 3px 8px rgba(120, 80, 30, 0.3);
-    }
+        /* 玫瑰花主体 */
+        .rose {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            height: 220px;
+            animation: breathe 5s ease-in-out infinite;
+        }
 
-    button.primary {
-      background: #dbb88c;
-      color: #2d2416;
-      box-shadow: 0 8px 18px rgba(160, 110, 50, 0.35);
-      border: 1px solid #b68b5c;
-      font-weight: 600;
-    }
+        @keyframes breathe {
+            0%,
+            100% {
+                transform: translateX(-50%) scale(1);
+            }
+            25% {
+                transform: translateX(-50%) scale(1.04);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.015);
+            }
+            75% {
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
 
-    button.primary:hover {
-      background: #e6c7a2;
-    }
+        /* 花瓣基础样式 */
+        .petal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
+            border-radius: 55% 35% 50% 40% / 40% 55% 35% 50%;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
 
-    .mode-buttons {
-      display: flex;
-      gap: 0.5rem;
-      background: #f2e7da;
-      padding: 0.4rem;
-      border-radius: 3rem;
-      box-shadow: inset 0 2px 6px rgba(120, 70, 20, 0.2);
-    }
+        /* 花心 */
+        .rose-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            background: radial-gradient(circle at 45% 40%,
+                    #9b1a1a 0%,
+                    #7a1010 40%,
+                    #5a0808 100%);
+            border-radius: 50%;
+            z-index: 20;
+            box-shadow:
+                inset 0 2px 6px rgba(0, 0, 0, 0.5),
+                0 0 12px rgba(180, 30, 30, 0.6),
+                0 0 25px rgba(150, 20, 20, 0.3);
+            animation: centerGlow 4s ease-in-out infinite;
+        }
 
-    .mode-btn {
-      padding: 0.5rem 1.2rem;
-      box-shadow: none;
-      border-radius: 2.5rem;
-      background: transparent;
-      border: none;
-      font-weight: 500;
-      color: #5f4a32;
-    }
+        @keyframes centerGlow {
+            0%,
+            100% {
+                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 12px rgba(180, 30, 30, 0.6), 0 0 25px rgba(150, 20, 20, 0.3);
+            }
+            50% {
+                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 18px rgba(200, 25, 25, 0.75), 0 0 35px rgba(170, 15, 15, 0.4);
+            }
+        }
 
-    .mode-btn.active {
-      background: white;
-      box-shadow: 0 4px 10px rgba(150, 110, 50, 0.3);
-      font-weight: 600;
-      color: #3b2c1a;
-    }
+        /* ---- 最内层花瓣 (Core) - 深红色 ---- */
+        .petal-core {
+            width: 40px;
+            height: 26px;
+            background: radial-gradient(ellipse at 55% 35%,
+                    #d43d5a 0%,
+                    #c0392b 35%,
+                    #9b1a1a 100%);
+            z-index: 16;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+        .petal-core:nth-child(1) {
+            transform: rotate(0deg) translateY(-22px) rotate(5deg);
+        }
+        .petal-core:nth-child(2) {
+            transform: rotate(72deg) translateY(-22px) rotate(-3deg);
+        }
+        .petal-core:nth-child(3) {
+            transform: rotate(144deg) translateY(-22px) rotate(8deg);
+        }
+        .petal-core:nth-child(4) {
+            transform: rotate(216deg) translateY(-22px) rotate(-6deg);
+        }
+        .petal-core:nth-child(5) {
+            transform: rotate(288deg) translateY(-22px) rotate(2deg);
+        }
 
-    /* 任务区域 */
-    .task-section {
-      background: #faf5ed;
-      border-radius: 2.5rem;
-      padding: 1.5rem 1.5rem 1.2rem;
-      box-shadow: inset 0 2px 10px rgba(200, 160, 110, 0.2), 0 10px 20px -8px rgba(90, 50, 15, 0.25);
-    }
+        /* ---- 内层花瓣 (Inner) - 深粉红 ---- */
+        .petal-inner {
+            width: 52px;
+            height: 32px;
+            background: radial-gradient(ellipse at 55% 35%,
+                    #e8707f 0%,
+                    #d43d5a 30%,
+                    #c0392b 100%);
+            z-index: 13;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+        .petal-inner:nth-child(6) {
+            transform: rotate(15deg) translateY(-36px) rotate(10deg);
+        }
+        .petal-inner:nth-child(7) {
+            transform: rotate(87deg) translateY(-36px) rotate(-8deg);
+        }
+        .petal-inner:nth-child(8) {
+            transform: rotate(159deg) translateY(-36px) rotate(5deg);
+        }
+        .petal-inner:nth-child(9) {
+            transform: rotate(231deg) translateY(-36px) rotate(-12deg);
+        }
+        .petal-inner:nth-child(10) {
+            transform: rotate(303deg) translateY(-36px) rotate(7deg);
+        }
 
-    .task-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.2rem;
-    }
+        /* ---- 中层花瓣 (Middle) - 粉色 ---- */
+        .petal-middle {
+            width: 68px;
+            height: 40px;
+            background: radial-gradient(ellipse at 55% 35%,
+                    #f290a5 0%,
+                    #e8707f 30%,
+                    #d43d5a 100%);
+            z-index: 10;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), 0 0 8px rgba(255, 150, 170, 0.2);
+        }
+        .petal-middle:nth-child(11) {
+            transform: rotate(6deg) translateY(-52px) rotate(14deg);
+        }
+        .petal-middle:nth-child(12) {
+            transform: rotate(60deg) translateY(-52px) rotate(-6deg);
+        }
+        .petal-middle:nth-child(13) {
+            transform: rotate(114deg) translateY(-52px) rotate(10deg);
+        }
+        .petal-middle:nth-child(14) {
+            transform: rotate(168deg) translateY(-52px) rotate(-10deg);
+        }
+        .petal-middle:nth-child(15) {
+            transform: rotate(222deg) translateY(-52px) rotate(8deg);
+        }
+        .petal-middle:nth-child(16) {
+            transform: rotate(276deg) translateY(-52px) rotate(-14deg);
+        }
+        .petal-middle:nth-child(17) {
+            transform: rotate(330deg) translateY(-52px) rotate(5deg);
+        }
 
-    .task-header h2 {
-      font-size: 1.5rem;
-      font-weight: 500;
-      color: #4f3b28;
-      letter-spacing: 0.5px;
-    }
+        /* ---- 外层花瓣 (Outer) - 浅粉色 ---- */
+        .petal-outer {
+            width: 85px;
+            height: 48px;
+            background: radial-gradient(ellipse at 55% 35%,
+                    #fbc0d0 0%,
+                    #f4a0b5 25%,
+                    #e8819b 70%,
+                    #e45d78 100%);
+            z-index: 7;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), 0 0 12px rgba(255, 170, 190, 0.25);
+            border-radius: 60% 30% 55% 35% / 35% 60% 30% 55%;
+        }
+        .petal-outer:nth-child(18) {
+            transform: rotate(0deg) translateY(-70px) rotate(18deg);
+        }
+        .petal-outer:nth-child(19) {
+            transform: rotate(45deg) translateY(-70px) rotate(-5deg);
+        }
+        .petal-outer:nth-child(20) {
+            transform: rotate(90deg) translateY(-70px) rotate(12deg);
+        }
+        .petal-outer:nth-child(21) {
+            transform: rotate(135deg) translateY(-70px) rotate(-16deg);
+        }
+        .petal-outer:nth-child(22) {
+            transform: rotate(180deg) translateY(-70px) rotate(8deg);
+        }
+        .petal-outer:nth-child(23) {
+            transform: rotate(225deg) translateY(-70px) rotate(-10deg);
+        }
+        .petal-outer:nth-child(24) {
+            transform: rotate(270deg) translateY(-70px) rotate(15deg);
+        }
+        .petal-outer:nth-child(25) {
+            transform: rotate(315deg) translateY(-70px) rotate(-8deg);
+        }
 
-    .add-task-form {
-      display: flex;
-      gap: 0.6rem;
-      margin-bottom: 1.3rem;
-    }
+        /* ---- 最外层大花瓣 ---- */
+        .petal-outermost {
+            width: 100px;
+            height: 56px;
+            background: radial-gradient(ellipse at 55% 35%,
+                    #fdd8e5 0%,
+                    #fbc0d0 25%,
+                    #f4a0b5 65%,
+                    #e8819b 100%);
+            z-index: 5;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15), 0 0 16px rgba(255, 185, 200, 0.3);
+            border-radius: 65% 28% 58% 32% / 30% 62% 28% 58%;
+            animation: outerPetalSway 8s ease-in-out infinite;
+        }
+        .petal-outermost:nth-child(26) {
+            transform: rotate(10deg) translateY(-88px) rotate(22deg);
+            animation-delay: 0s;
+        }
+        .petal-outermost:nth-child(27) {
+            transform: rotate(82deg) translateY(-88px) rotate(-10deg);
+            animation-delay: 1.2s;
+        }
+        .petal-outermost:nth-child(28) {
+            transform: rotate(154deg) translateY(-88px) rotate(16deg);
+            animation-delay: 2.4s;
+        }
+        .petal-outermost:nth-child(29) {
+            transform: rotate(226deg) translateY(-88px) rotate(-20deg);
+            animation-delay: 3.6s;
+        }
+        .petal-outermost:nth-child(30) {
+            transform: rotate(298deg) translateY(-88px) rotate(12deg);
+            animation-delay: 4.8s;
+        }
 
-    .add-task-form input {
-      flex: 1;
-      padding: 0.8rem 1.2rem;
-      border: 1px solid #ddc7aa;
-      border-radius: 2rem;
-      background: #fffdf9;
-      font-size: 0.95rem;
-      outline: none;
-      box-shadow: inset 0 2px 5px rgba(150, 120, 70, 0.1);
-      transition: 0.2s;
-      color: #3e3322;
-    }
+        @keyframes outerPetalSway {
+            0%,
+            100% {
+                transform: var(--base-transform, rotate(0deg) translateY(-88px) rotate(0deg));
+            }
+            30% {
+                transform: rotate(calc(var(--base-angle, 0deg) + 3deg)) translateY(calc(-88px + 4px)) rotate(calc(var(
+                                    --base-petal-rot,
+                                    0deg
+                                ) + 5deg));
+            }
+            60% {
+                transform: rotate(calc(var(--base-angle, 0deg) - 2deg)) translateY(calc(-88px - 3px)) rotate(calc(var(
+                                    --base-petal-rot,
+                                    0deg
+                                ) - 3deg));
+            }
+        }
+        /* 为最外层花瓣单独设置动画（使用nth-child的transform作为基础） */
+        .petal-outermost:nth-child(26) {
+            animation: outerSway0 8s ease-in-out infinite;
+        }
+        .petal-outermost:nth-child(27) {
+            animation: outerSway1 8s ease-in-out infinite;
+        }
+        .petal-outermost:nth-child(28) {
+            animation: outerSway2 8s ease-in-out infinite;
+        }
+        .petal-outermost:nth-child(29) {
+            animation: outerSway3 8s ease-in-out infinite;
+        }
+        .petal-outermost:nth-child(30) {
+            animation: outerSway4 8s ease-in-out infinite;
+        }
 
-    .add-task-form input:focus {
-      border-color: #c49a6c;
-      box-shadow: 0 0 0 3px rgba(200, 150, 90, 0.25);
-    }
+        @keyframes outerSway0 {
+            0%,
+            100% {
+                transform: rotate(10deg) translateY(-88px) rotate(22deg);
+            }
+            30% {
+                transform: rotate(13deg) translateY(-84px) rotate(27deg);
+            }
+            60% {
+                transform: rotate(8deg) translateY(-91px) rotate(19deg);
+            }
+        }
+        @keyframes outerSway1 {
+            0%,
+            100% {
+                transform: rotate(82deg) translateY(-88px) rotate(-10deg);
+            }
+            30% {
+                transform: rotate(85deg) translateY(-84px) rotate(-5deg);
+            }
+            60% {
+                transform: rotate(80deg) translateY(-91px) rotate(-13deg);
+            }
+        }
+        @keyframes outerSway2 {
+            0%,
+            100% {
+                transform: rotate(154deg) translateY(-88px) rotate(16deg);
+            }
+            30% {
+                transform: rotate(157deg) translateY(-84px) rotate(21deg);
+            }
+            60% {
+                transform: rotate(152deg) translateY(-91px) rotate(13deg);
+            }
+        }
+        @keyframes outerSway3 {
+            0%,
+            100% {
+                transform: rotate(226deg) translateY(-88px) rotate(-20deg);
+            }
+            30% {
+                transform: rotate(229deg) translateY(-84px) rotate(-15deg);
+            }
+            60% {
+                transform: rotate(224deg) translateY(-91px) rotate(-23deg);
+            }
+        }
+        @keyframes outerSway4 {
+            0%,
+            100% {
+                transform: rotate(298deg) translateY(-88px) rotate(12deg);
+            }
+            30% {
+                transform: rotate(301deg) translateY(-84px) rotate(17deg);
+            }
+            60% {
+                transform: rotate(296deg) translateY(-91px) rotate(9deg);
+            }
+        }
 
-    .task-list {
-      list-style: none;
-      max-height: 240px;
-      overflow-y: auto;
-      padding-right: 0.3rem;
-    }
+        /* 花萼 */
+        .sepals {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .sepal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 50px;
+            background: radial-gradient(ellipse at 40% 20%,
+                    #6b9e4a 0%,
+                    #4a7c3f 40%,
+                    #2d5528 100%);
+            border-radius: 20% 60% 30% 70% / 60% 30% 70% 25%;
+            transform-origin: center top;
+            z-index: 4;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+        .sepal:nth-child(1) {
+            transform: rotate(20deg) translateY(-60px) rotate(15deg);
+        }
+        .sepal:nth-child(2) {
+            transform: rotate(100deg) translateY(-58px) rotate(-20deg);
+        }
+        .sepal:nth-child(3) {
+            transform: rotate(180deg) translateY(-62px) rotate(10deg);
+        }
+        .sepal:nth-child(4) {
+            transform: rotate(260deg) translateY(-56px) rotate(-12deg);
+        }
+        .sepal:nth-child(5) {
+            transform: rotate(330deg) translateY(-60px) rotate(18deg);
+        }
 
-    .task-item {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      padding: 0.7rem 0.4rem;
-      border-bottom: 1px solid #eadbc8;
-      transition: 0.15s;
-      color: #4a3926;
-    }
+        /* 茎 */
+        .stem {
+            position: absolute;
+            top: 210px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 140px;
+            background: linear-gradient(180deg,
+                    #5d9b4a 0%,
+                    #4a7c3f 20%,
+                    #3d6b35 50%,
+                    #2d5528 100%);
+            border-radius: 5px 6px 6px 5px;
+            z-index: 6;
+            box-shadow:
+                2px 0 4px rgba(0, 0, 0, 0.2),
+                -1px 0 2px rgba(255, 255, 255, 0.05),
+                0 0 8px rgba(80, 130, 60, 0.3);
+        }
+        .stem::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 2px;
+            width: 2px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 1px;
+        }
 
-    .task-item:last-child {
-      border-bottom: none;
-    }
+        /* 叶子 */
+        .leaf {
+            position: absolute;
+            z-index: 5;
+            width: 55px;
+            height: 28px;
+            background: radial-gradient(ellipse at 45% 30%,
+                    #7dbf5a 0%,
+                    #5d9b4a 35%,
+                    #3d6b35 100%);
+            border-radius: 55% 20% 45% 30% / 30% 55% 25% 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+        }
+        .leaf::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            width: 40%;
+            height: 1.5px;
+            background: rgba(30, 60, 20, 0.5);
+            border-radius: 1px;
+            transform: rotate(-5deg);
+        }
+        .leaf-left {
+            top: 260px;
+            left: 95px;
+            transform: rotate(-35deg) scaleX(1.1);
+        }
+        .leaf-right {
+            top: 295px;
+            left: 130px;
+            transform: rotate(25deg) scaleX(1.05);
+            border-radius: 20% 55% 30% 45% / 55% 30% 50% 25%;
+        }
+        .leaf-small {
+            top: 320px;
+            left: 100px;
+            width: 40px;
+            height: 22px;
+            transform: rotate(-50deg);
+            border-radius: 50% 18% 42% 28% / 28% 52% 24% 48%;
+        }
 
-    .task-checkbox {
-      width: 1.4rem;
-      height: 1.4rem;
-      accent-color: #b68b5c;
-      cursor: pointer;
-      transform: scale(1);
-      flex-shrink: 0;
-    }
+        /* 刺 */
+        .thorn {
+            position: absolute;
+            z-index: 5;
+            width: 6px;
+            height: 14px;
+            background: linear-gradient(180deg, #8b6b4a 0%, #5d3d28 100%);
+            border-radius: 50% 30% 30% 50%;
+            pointer-events: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        .thorn:nth-child(1) {
+            top: 245px;
+            left: 135px;
+            transform: rotate(20deg);
+        }
+        .thorn:nth-child(2) {
+            top: 275px;
+            left: 142px;
+            transform: rotate(-15deg);
+            height: 11px;
+        }
+        .thorn:nth-child(3) {
+            top: 310px;
+            left: 138px;
+            transform: rotate(25deg);
+            height: 10px;
+        }
 
-    .task-text {
-      flex: 1;
-      font-size: 1.05rem;
-      word-break: break-word;
-    }
+        /* 文字区域 */
+        .text-container {
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .text-title {
+            font-size: 2rem;
+            color: #fbc0d0;
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 30px rgba(255, 170, 190, 0.5), 0 0 60px rgba(255, 140, 160, 0.25);
+            animation: textShimmer 5s ease-in-out infinite;
+            font-weight: normal;
+            line-height: 1.5;
+        }
+        .text-subtitle {
+            font-size: 1rem;
+            color: #e8b4c0;
+            letter-spacing: 0.06em;
+            opacity: 0.8;
+            text-shadow: 0 0 15px rgba(255, 160, 180, 0.3);
+            margin-top: 4px;
+            animation: textShimmer 5s ease-in-out infinite;
+            animation-delay: 1.5s;
+        }
+        @keyframes textShimmer {
+            0%,
+            100% {
+                opacity: 0.85;
+                text-shadow: 0 0 30px rgba(255, 170, 190, 0.5), 0 0 60px rgba(255, 140, 160, 0.25);
+            }
+            30% {
+                opacity: 1;
+                text-shadow: 0 0 40px rgba(255, 185, 200, 0.65), 0 0 75px rgba(255, 150, 170, 0.35);
+            }
+            65% {
+                opacity: 0.9;
+                text-shadow: 0 0 25px rgba(255, 160, 180, 0.45), 0 0 50px rgba(255, 130, 150, 0.2);
+            }
+        }
 
-    .task-text.completed {
-      text-decoration: line-through;
-      color: #b9a48b;
-      opacity: 0.75;
-    }
-
-    .delete-btn {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0.3rem 0.7rem;
-      font-size: 1.2rem;
-      color: #b2977a;
-      border-radius: 2rem;
-      cursor: pointer;
-      transition: 0.2s;
-      background: #f5ede3;
-    }
-
-    .delete-btn:hover {
-      background: #f0d9c2;
-      color: #a0582c;
-      box-shadow: 0 2px 8px rgba(160, 100, 30, 0.3);
-    }
-
-    .progress-text {
-      font-size: 0.9rem;
-      color: #7a684e;
-      margin-top: 0.6rem;
-      text-align: right;
-    }
-
-    .reset-small {
-      font-size: 0.9rem;
-      padding: 0.5rem 1.2rem;
-    }
-  </style>
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .rose-wrapper {
+                width: 220px;
+                height: 300px;
+                transform: scale(0.78);
+            }
+            .rose {
+                width: 220px;
+                height: 220px;
+            }
+            .text-title {
+                font-size: 1.5rem;
+            }
+            .text-subtitle {
+                font-size: 0.85rem;
+            }
+            .stem {
+                height: 110px;
+                top: 200px;
+            }
+            .leaf-left {
+                top: 240px;
+                left: 88px;
+            }
+            .leaf-right {
+                top: 268px;
+                left: 112px;
+            }
+            .leaf-small {
+                top: 290px;
+                left: 90px;
+            }
+            .thorn:nth-child(1) {
+                top: 228px;
+                left: 118px;
+            }
+            .thorn:nth-child(2) {
+                top: 252px;
+                left: 122px;
+            }
+            .thorn:nth-child(3) {
+                top: 278px;
+                left: 118px;
+            }
+        }
+        @media (max-width: 400px) {
+            .rose-wrapper {
+                width: 180px;
+                height: 250px;
+                transform: scale(0.62);
+            }
+            .text-title {
+                font-size: 1.2rem;
+            }
+            .text-subtitle {
+                font-size: 0.7rem;
+            }
+            .stem {
+                height: 90px;
+                top: 195px;
+            }
+            .leaf-left {
+                top: 225px;
+                left: 80px;
+            }
+            .leaf-right {
+                top: 248px;
+                left: 100px;
+            }
+            .leaf-small {
+                top: 265px;
+                left: 82px;
+            }
+            .thorn:nth-child(1) {
+                top: 215px;
+                left: 105px;
+            }
+            .thorn:nth-child(2) {
+                top: 235px;
+                left: 108px;
+            }
+            .thorn:nth-child(3) {
+                top: 255px;
+                left: 105px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- 专注时钟部分 -->
-    <div class="timer-section">
-      <div class="mode-label" id="modeDisplay">专注模式</div>
-      <div class="timer-display" id="timerDisplay">25:00</div>
-      
-      <div class="mode-buttons">
-        <button id="modeFocus" class="mode-btn active">🍅 专注</button>
-        <button id="modeShortBreak" class="mode-btn">☕ 短休</button>
-        <button id="modeLongBreak" class="mode-btn">🌿 长休</button>
-      </div>
 
-      <div class="controls">
-        <button id="startPauseBtn" class="primary">▶ 开始</button>
-        <button id="resetTimerBtn" class="reset-small">↺ 重置</button>
-      </div>
+    <!-- 花瓣飘落画布 -->
+    <canvas id="petalCanvas"></canvas>
+
+    <!-- 主体内容 -->
+    <div class="main-container">
+        <!-- 玫瑰花 -->
+        <div class="rose-wrapper" id="roseWrapper">
+            <!-- 花的主体 -->
+            <div class="rose" id="rose">
+                <!-- 最内层花瓣 Core -->
+                <div class="petal petal-core"></div>
+                <div class="petal petal-core"></div>
+                <div class="petal petal-core"></div>
+                <div class="petal petal-core"></div>
+                <div class="petal petal-core"></div>
+
+                <!-- 内层花瓣 Inner -->
+                <div class="petal petal-inner"></div>
+                <div class="petal petal-inner"></div>
+                <div class="petal petal-inner"></div>
+                <div class="petal petal-inner"></div>
+                <div class="petal petal-inner"></div>
+
+                <!-- 中层花瓣 Middle -->
+                <div class="petal petal-middle"></div>
+                <div class="petal petal-middle"></div>
+                <div class="petal petal-middle"></div>
+                <div class="petal petal-middle"></div>
+                <div class="petal petal-middle"></div>
+                <div class="petal petal-middle"></div>
+                <div class="petal petal-middle"></div>
+
+                <!-- 外层花瓣 Outer -->
+                <div class="petal petal-outer"></div>
+                <div class="petal petal-outer"></div>
+                <div class="petal petal-outer"></div>
+                <div class="petal petal-outer"></div>
+                <div class="petal petal-outer"></div>
+                <div class="petal petal-outer"></div>
+                <div class="petal petal-outer"></div>
+                <div class="petal petal-outer"></div>
+
+                <!-- 最外层大花瓣 -->
+                <div class="petal petal-outermost"></div>
+                <div class="petal petal-outermost"></div>
+                <div class="petal petal-outermost"></div>
+                <div class="petal petal-outermost"></div>
+                <div class="petal petal-outermost"></div>
+
+                <!-- 花心 -->
+                <div class="rose-center"></div>
+            </div>
+
+            <!-- 花萼 -->
+            <div class="sepals">
+                <div class="sepal"></div>
+                <div class="sepal"></div>
+                <div class="sepal"></div>
+                <div class="sepal"></div>
+                <div class="sepal"></div>
+            </div>
+
+            <!-- 茎 -->
+            <div class="stem"></div>
+
+            <!-- 刺 -->
+            <div class="thorn"></div>
+            <div class="thorn"></div>
+            <div class="thorn"></div>
+
+            <!-- 叶子 -->
+            <div class="leaf leaf-left"></div>
+            <div class="leaf leaf-right"></div>
+            <div class="leaf leaf-small"></div>
+        </div>
+
+        <!-- 文字 -->
+        <div class="text-container">
+            <h1 class="text-title">为你绽放</h1>
+            <p class="text-subtitle">每一片花瓣，都是一句温柔的告白</p>
+        </div>
     </div>
 
-    <!-- 极简任务清单 -->
-    <div class="task-section">
-      <div class="task-header">
-        <h2>📋 今日待办</h2>
-      </div>
-      
-      <div class="add-task-form">
-        <input type="text" id="taskInput" placeholder="写下一个任务..." autocomplete="off" />
-        <button id="addTaskBtn" style="padding:0.8rem 1.4rem;">➕ 添加</button>
-      </div>
+    <script>
+        (function() {
+            const canvas = document.getElementById('petalCanvas');
+            const ctx = canvas.getContext('2d');
+            const roseWrapper = document.getElementById('roseWrapper');
 
-      <ul class="task-list" id="taskList">
-        <!-- 动态任务渲染 -->
-      </ul>
-      
-      <div class="progress-text" id="progressText">完成 0 / 0</div>
-    </div>
-  </div>
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
 
-  <script>
-    (function() {
-      // ---------- 时钟状态 ----------
-      const modes = {
-        focus: { name: '专注', duration: 25 * 60, display: '专注模式' },
-        shortBreak: { name: '短休', duration: 5 * 60, display: '短休模式' },
-        longBreak: { name: '长休', duration: 15 * 60, display: '长休模式' }
-      };
+            // 花瓣数组
+            let petals = [];
+            // 光点粒子数组
+            let sparkles = [];
 
-      let currentMode = 'focus';        // 'focus', 'shortBreak', 'longBreak'
-      let timeLeft = modes.focus.duration; // 秒
-      let timerInterval = null;
-      let isRunning = false;
+            const MAX_PETALS = 45;
+            const MAX_SPARKLES = 35;
 
-      // DOM 元素
-      const timerDisplay = document.getElementById('timerDisplay');
-      const modeDisplay = document.getElementById('modeDisplay');
-      const startPauseBtn = document.getElementById('startPauseBtn');
-      const resetTimerBtn = document.getElementById('resetTimerBtn');
-      const modeFocusBtn = document.getElementById('modeFocus');
-      const modeShortBreakBtn = document.getElementById('modeShortBreak');
-      const modeLongBreakBtn = document.getElementById('modeLongBreak');
-
-      // 任务相关
-      const taskInput = document.getElementById('taskInput');
-      const addTaskBtn = document.getElementById('addTaskBtn');
-      const taskList = document.getElementById('taskList');
-      const progressText = document.getElementById('progressText');
-
-      // 任务数据存储
-      let tasks = [];
-
-      // ---------- 工具函数 ----------
-      function formatTime(seconds) {
-        if (seconds < 0) seconds = 0;
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      }
-
-      function updateTimerDisplay() {
-        timerDisplay.textContent = formatTime(timeLeft);
-      }
-
-      function clearTimerInterval() {
-        if (timerInterval) {
-          clearInterval(timerInterval);
-          timerInterval = null;
-        }
-      }
-
-      function stopTimer() {
-        clearTimerInterval();
-        isRunning = false;
-        startPauseBtn.innerHTML = '▶ 开始';
-      }
-
-      // 切换到指定模式 (不自动开始)
-      function switchMode(modeKey) {
-        if (currentMode === modeKey && isRunning) {
-          // 如果相同模式且正在运行，询问是否重启？这里设计为不自动重置，保留运行。但通常模式切换会重置。
-          // 按习惯：切换模式时停止计时并重置为新模式时长。
-        }
-        // 停止任何进行中的计时
-        stopTimer();
-        currentMode = modeKey;
-        timeLeft = modes[modeKey].duration;
-        updateTimerDisplay();
-        modeDisplay.textContent = modes[modeKey].display;
-
-        // 更新模式按钮激活样式
-        [modeFocusBtn, modeShortBreakBtn, modeLongBreakBtn].forEach(btn => btn.classList.remove('active'));
-        if (modeKey === 'focus') modeFocusBtn.classList.add('active');
-        else if (modeKey === 'shortBreak') modeShortBreakBtn.classList.add('active');
-        else if (modeKey === 'longBreak') modeLongBreakBtn.classList.add('active');
-      }
-
-      // 开始/暂停
-      function toggleStartPause() {
-        if (isRunning) {
-          // 暂停
-          stopTimer();
-        } else {
-          // 开始
-          if (timeLeft <= 0) {
-            // 如果时间已经到了，重置为当前模式时长再开始
-            timeLeft = modes[currentMode].duration;
-            updateTimerDisplay();
-          }
-          isRunning = true;
-          startPauseBtn.innerHTML = '⏸️ 暂停';
-          
-          timerInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerDisplay();
-
-            if (timeLeft <= 0) {
-              // 时间到
-              clearTimerInterval();
-              isRunning = false;
-              startPauseBtn.innerHTML = '▶ 开始';
-              timeLeft = 0;
-              updateTimerDisplay();
-              
-              // 简单的浏览器通知提醒 (如果允许)
-              if (Notification && Notification.permission === "granted") {
-                new Notification('⏰ 计时结束', { body: `${modes[currentMode].display} 已完成！` });
-              } else if (Notification && Notification.permission !== "denied") {
-                Notification.requestPermission().then(perm => {
-                  if (perm === "granted") {
-                    new Notification('⏰ 计时结束', { body: `${modes[currentMode].display} 已完成！` });
-                  }
-                });
-              }
-              
-              // 也播放轻微提示音（利用 Web Audio 可选，这里简单用 alert 风格？改为更优雅：短暂显示）
-              alert(`✨ ${modes[currentMode].display} 时间结束！休息一下或开始下一个任务吧。`);
+            // 获取玫瑰花在屏幕上的位置
+            function getRoseCenter() {
+                const rect = roseWrapper.getBoundingClientRect();
+                return {
+                    x: rect.left + rect.width / 2,
+                    y: rect.top + 120, // 花的主体中心大约在 wrapper 顶部下方120px
+                    width: rect.width,
+                    height: rect.height,
+                };
             }
-          }, 1000);
-        }
-      }
 
-      function resetCurrentTimer() {
-        stopTimer();
-        timeLeft = modes[currentMode].duration;
-        updateTimerDisplay();
-        startPauseBtn.innerHTML = '▶ 开始';
-      }
+            // 花瓣类
+            class Petal {
+                constructor(spawnFromRose = false) {
+                    this.reset(spawnFromRose);
+                }
 
-      // ---------- 任务逻辑 ----------
-      function saveTasksToStorage() {
-        localStorage.setItem('focusClockTasks', JSON.stringify(tasks));
-      }
+                reset(spawnFromRose = false) {
+                    if (spawnFromRose) {
+                        const rose = getRoseCenter();
+                        this.x = rose.x + (Math.random() - 0.5) * rose.width * 0.8;
+                        this.y = rose.y + (Math.random() - 0.3) * 60;
+                    } else {
+                        this.x = Math.random() * (width + 100) - 50;
+                        this.y = -40 - Math.random() * 200;
+                    }
+                    this.size = 6 + Math.random() * 16;
+                    this.rotation = Math.random() * Math.PI * 2;
+                    this.rotationSpeed = (Math.random() - 0.5) * 0.04;
+                    this.fallSpeed = 0.6 + Math.random() * 2.2;
+                    this.swayAmount = 0.3 + Math.random() * 1.8;
+                    this.swaySpeed = 0.008 + Math.random() * 0.025;
+                    this.swayOffset = Math.random() * Math.PI * 2;
+                    this.opacity = 0.55 + Math.random() * 0.45;
+                    // 颜色在粉红到深红之间
+                    const hueShift = Math.random() * 25;
+                    this.color = `hsla(${345 + hueShift}, ${65 + Math.random() * 30}%, ${55 + Math.random() * 35}%, ${this.opacity})`;
+                    this.time = Math.random() * 1000;
+                    this.windGust = 0;
+                }
 
-      function loadTasksFromStorage() {
-        const stored = localStorage.getItem('focusClockTasks');
-        if (stored) {
-          try {
-            tasks = JSON.parse(stored);
-          } catch (e) {
-            tasks = [];
-          }
-        } else {
-          // 默认示例任务
-          tasks = [
-            { id: Date.now() + 1, text: '阅读设计文档', completed: false },
-            { id: Date.now() + 2, text: '完成代码审查', completed: false }
-          ];
-        }
-      }
+                update(deltaTime, mouseInfluence = 0) {
+                    this.time += deltaTime;
+                    const sway = Math.sin(this.time * this.swaySpeed + this.swayOffset) * this.swayAmount;
+                    const windEffect = this.windGust * 0.5;
+                    this.x += sway + windEffect + mouseInfluence * 0.3;
+                    this.y += this.fallSpeed;
+                    this.rotation += this.rotationSpeed;
+                    // 风逐渐衰减
+                    this.windGust *= 0.98;
 
-      function renderTasks() {
-        if (!taskList) return;
-        taskList.innerHTML = '';
-        
-        if (tasks.length === 0) {
-          taskList.innerHTML = '<li style="padding:1rem;text-align:center;color:#b9a68b;">✨ 暂无任务，添加一个吧</li>';
-          updateProgress();
-          return;
-        }
+                    // 超出屏幕底部或两侧太远则重置
+                    if (this.y > height + 60 || this.x < -80 || this.x > width + 80) {
+                        this.reset(Math.random() < 0.2); // 20%概率从花的位置生成
+                    }
+                }
 
-        tasks.forEach(task => {
-          const li = document.createElement('li');
-          li.className = 'task-item';
-          
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.className = 'task-checkbox';
-          checkbox.checked = task.completed;
-          checkbox.addEventListener('change', (e) => {
-            task.completed = e.target.checked;
-            saveTasksToStorage();
-            renderTasks();
-          });
+                draw(ctx) {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    ctx.globalAlpha = this.opacity;
 
-          const span = document.createElement('span');
-          span.className = 'task-text' + (task.completed ? ' completed' : '');
-          span.textContent = task.text;
+                    // 绘制花瓣形状（泪滴/椭圆）
+                    const s = this.size;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -s * 0.85);
+                    ctx.bezierCurveTo(s * 0.45, -s * 0.35, s * 0.45, s * 0.5, 0, s * 0.75);
+                    ctx.bezierCurveTo(-s * 0.45, s * 0.5, -s * 0.45, -s * 0.35, 0, -s * 0.85);
+                    ctx.closePath();
 
-          const delBtn = document.createElement('button');
-          delBtn.className = 'delete-btn';
-          delBtn.innerHTML = '🗑️';
-          delBtn.setAttribute('aria-label', '删除任务');
-          delBtn.addEventListener('click', () => {
-            tasks = tasks.filter(t => t.id !== task.id);
-            saveTasksToStorage();
-            renderTasks();
-          });
+                    // 填充颜色
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
 
-          li.appendChild(checkbox);
-          li.appendChild(span);
-          li.appendChild(delBtn);
-          taskList.appendChild(li);
-        });
+                    // 轻微边缘发光
+                    ctx.strokeStyle = this.color.replace(/[\d.]+\)$/, '0.35)');
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
 
-        updateProgress();
-      }
+                    ctx.restore();
+                }
+            }
 
-      function updateProgress() {
-        const total = tasks.length;
-        const completedCount = tasks.filter(t => t.completed).length;
-        progressText.textContent = `完成 ${completedCount} / ${total}`;
-      }
+            // 光点粒子类
+            class Sparkle {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = Math.random() * width;
+                    this.y = Math.random() * height;
+                    this.size = 0.8 + Math.random() * 3.5;
+                    this.baseOpacity = 0.25 + Math.random() * 0.55;
+                    this.opacity = this.baseOpacity;
+                    this.twinkleSpeed = 0.02 + Math.random() * 0.06;
+                    this.twinkleOffset = Math.random() * Math.PI * 2;
+                    this.driftX = (Math.random() - 0.5) * 0.25;
+                    this.driftY = (Math.random() - 0.5) * 0.2;
+                    this.time = Math.random() * 1000;
+                    this.color = Math.random() < 0.6 ?
+                        `hsla(45, 85%, ${75 + Math.random() * 20}%,` :
+                        `hsla(340, 70%, ${70 + Math.random() * 25}%,`;
+                }
+                update(deltaTime) {
+                    this.time += deltaTime;
+                    this.opacity = this.baseOpacity + Math.sin(this.time * this.twinkleSpeed + this.twinkleOffset) * 0.3;
+                    this.opacity = Math.max(0.05, Math.min(1, this.opacity));
+                    this.x += this.driftX;
+                    this.y += this.driftY;
+                    if (this.x < -10) this.x = width + 10;
+                    if (this.x > width + 10) this.x = -10;
+                    if (this.y < -10) this.y = height + 10;
+                    if (this.y > height + 10) this.y = -10;
+                }
+                draw(ctx) {
+                    ctx.save();
+                    ctx.globalAlpha = this.opacity;
+                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
+                    gradient.addColorStop(0, this.color + '1)');
+                    gradient.addColorStop(0.4, this.color + '0.6)');
+                    gradient.addColorStop(1, this.color + '0)');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 核心亮点
+                    ctx.fillStyle = this.color + '0.9)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
 
-      function addNewTask() {
-        const text = taskInput.value.trim();
-        if (text === '') {
-          alert('请输入任务内容');
-          return;
-        }
-        const newTask = {
-          id: Date.now(),
-          text: text,
-          completed: false
-        };
-        tasks.push(newTask);
-        saveTasksToStorage();
-        taskInput.value = '';
-        renderTasks();
-        // 聚焦回输入框
-        taskInput.focus();
-      }
+            // 初始化
+            function init() {
+                petals = [];
+                sparkles = [];
+                for (let i = 0; i < MAX_PETALS; i++) {
+                    const petal = new Petal(i < 8); // 前8片从花的位置生成
+                    petal.y = Math.random() * height; // 初始分散在屏幕各处
+                    petals.push(petal);
+                }
+                for (let i = 0; i < MAX_SPARKLES; i++) {
+                    sparkles.push(new Sparkle());
+                }
+            }
 
-      // ---------- 事件绑定 ----------
-      // 时钟控制
-      startPauseBtn.addEventListener('click', toggleStartPause);
-      resetTimerBtn.addEventListener('click', resetCurrentTimer);
+            // 鼠标状态
+            let mouseX = width / 2;
+            let mouseY = height / 2;
+            let mouseActive = false;
+            let mouseNearRose = false;
+            let lastMouseMove = 0;
 
-      modeFocusBtn.addEventListener('click', () => switchMode('focus'));
-      modeShortBreakBtn.addEventListener('click', () => switchMode('shortBreak'));
-      modeLongBreakBtn.addEventListener('click', () => switchMode('longBreak'));
+            // 监听鼠标移动
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                mouseActive = true;
+                lastMouseMove = performance.now();
 
-      // 任务操作
-      addTaskBtn.addEventListener('click', addNewTask);
-      taskInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          addNewTask();
-        }
-      });
+                // 检查鼠标是否在玫瑰花附近
+                const rose = getRoseCenter();
+                const distToRose = Math.hypot(mouseX - rose.x, mouseY - rose.y);
+                mouseNearRose = distToRose < rose.width * 1.1;
+            });
 
-      // 初始加载
-      loadTasksFromStorage();
-      renderTasks();
-      // 设置时钟默认显示
-      updateTimerDisplay();
-      modeDisplay.textContent = modes.focus.display;
-      
-      // 请求通知权限（静默）
-      if (window.Notification && Notification.permission === "default") {
-        Notification.requestPermission();
-      }
+            document.addEventListener('mouseleave', () => {
+                mouseActive = false;
+                mouseNearRose = false;
+            });
 
-      // 页面关闭或刷新前清理计时器（好习惯）
-      window.addEventListener('beforeunload', () => {
-        clearTimerInterval();
-      });
+            // 触摸事件
+            document.addEventListener('touchmove', (e) => {
+                if (e.touches.length > 0) {
+                    mouseX = e.touches[0].clientX;
+                    mouseY = e.touches[0].clientY;
+                    mouseActive = true;
+                    lastMouseMove = performance.now();
+                    const rose = getRoseCenter();
+                    const distToRose = Math.hypot(mouseX - rose.x, mouseY - rose.y);
+                    mouseNearRose = distToRose < rose.width * 1.1;
+                }
+            }, { passive: true });
 
-    })();
-  </script>
+            document.addEventListener('touchend', () => {
+                mouseActive = false;
+                mouseNearRose = false;
+            });
+
+            // 窗口大小变化
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                // 重新分布光点
+                sparkles.forEach(s => s.reset());
+            });
+
+            // 偶尔一阵风
+            function gustWind() {
+                const strength = (Math.random() - 0.5) * 4;
+                petals.forEach(p => {
+                    p.windGust += strength * (0.5 + Math.random());
+                });
+            }
+            setInterval(gustWind, 3000 + Math.random() * 4000);
+
+            // 动画循环
+            let lastTime = performance.now();
+            let spawnTimer = 0;
+            const SPAWN_INTERVAL = 180; // 每180ms检查是否需要生成花瓣
+
+            function animate(timestamp) {
+                const deltaTime = Math.min(timestamp - lastTime, 50); // 防止大帧跳跃
+                lastTime = timestamp;
+
+                ctx.clearRect(0, 0, width, height);
+
+                // 鼠标影响力（随时间衰减）
+                const timeSinceMouse = timestamp - lastMouseMove;
+                const mouseInfluence = mouseActive && timeSinceMouse < 2000 ?
+                    (1 - timeSinceMouse / 2000) * (mouseNearRose ? 2.5 : 0.6) :
+                    0;
+
+                // 鼠标靠近花时，额外生成花瓣
+                if (mouseNearRose && mouseActive) {
+                    spawnTimer += deltaTime;
+                    if (spawnTimer > SPAWN_INTERVAL && petals.length < MAX_PETALS + 15) {
+                        spawnTimer = 0;
+                        const newPetal = new Petal(true);
+                        petals.push(newPetal);
+                        // 限制总数
+                        if (petals.length > MAX_PETALS + 20) {
+                            petals.shift();
+                        }
+                    }
+                } else {
+                    spawnTimer = 0;
+                    // 逐渐移除多余花瓣
+                    if (petals.length > MAX_PETALS) {
+                        petals.pop();
+                    }
+                }
+
+                // 更新和绘制光点
+                sparkles.forEach(s => {
+                    s.update(deltaTime);
+                    s.draw(ctx);
+                });
+
+                // 更新和绘制花瓣
+                petals.forEach(p => {
+                    p.update(deltaTime, mouseInfluence);
+                    p.draw(ctx);
+                });
+
+                // 如果花瓣太少，补充
+                if (petals.length < MAX_PETALS - 5 && !mouseNearRose) {
+                    petals.push(new Petal(false));
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            // 启动
+            init();
+            requestAnimationFrame(animate);
+
+            // 点击玫瑰花触发更多花瓣
+            roseWrapper.addEventListener('click', (e) => {
+                const rose = getRoseCenter();
+                const burstCount = 12;
+                for (let i = 0; i < burstCount; i++) {
+                    const petal = new Petal(true);
+                    petal.x = rose.x + (Math.random() - 0.5) * 80;
+                    petal.y = rose.y + (Math.random() - 0.5) * 50;
+                    petal.fallSpeed = 1.5 + Math.random() * 3;
+                    petal.swayAmount = 1 + Math.random() * 3;
+                    petal.rotationSpeed = (Math.random() - 0.5) * 0.12;
+                    petal.opacity = 0.7 + Math.random() * 0.3;
+                    petal.size = 5 + Math.random() * 14;
+                    petal.windGust = (Math.random() - 0.5) * 6;
+                    petals.push(petal);
+                }
+                // 限制总数
+                while (petals.length > MAX_PETALS + 30) {
+                    petals.shift();
+                }
+            });
+
+            // 移动端也支持点击
+            roseWrapper.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                roseWrapper.click();
+            });
+
+            console.log('🌹 玫瑰花已为你绽放 ~');
+            console.log('💡 提示：点击花朵会有花瓣飘落效果哦！');
+            console.log('✨ 移动鼠标靠近花朵也会有惊喜~');
+        })();
+    </script>
 </body>
 </html>
