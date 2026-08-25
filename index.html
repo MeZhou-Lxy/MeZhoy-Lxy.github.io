@@ -3,22 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌹 玫瑰花 - 为你绽放</title>
+    <title>用户满意度调查问卷</title>
     <style>
         :root {
-            --bg-start: #1a0a1e;
-            --bg-mid: #2d1528;
-            --bg-end: #1a0a1e;
-            --rose-outer: #f4a0b5;
-            --rose-mid-outer: #e8819b;
-            --rose-middle: #e45d78;
-            --rose-inner: #d43d5a;
-            --rose-core: #c0392b;
-            --rose-center: #8b1a1a;
-            --stem-green: #4a7c3f;
-            --leaf-green: #5d9b4a;
-            --glow-color: #ffb3c6;
-            --particle-gold: #ffd4a8;
+            --primary: #6C5CE7;
+            --primary-light: #a29bfe;
+            --primary-dark: #4834d4;
+            --accent: #00CEC9;
+            --success: #00B894;
+            --danger: #FF6B6B;
+            --warning: #FDCB6E;
+            --bg-start: #f8f9fa;
+            --bg-end: #e9ecef;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --border-light: #e0e0e0;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.1);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -28,1131 +34,814 @@
         }
 
         body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
             min-height: 100vh;
-            background: radial-gradient(ellipse at center,
-                    #2d1528 0%,
-                    #1f0d1f 25%,
-                    #1a0a1e 50%,
-                    #100618 75%,
-                    #0a0412 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            overflow: hidden;
-            font-family: 'Georgia', 'Times New Roman', 'STSong', 'Songti SC', 'SimSun', 'Noto Serif SC', serif;
-            cursor: default;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
+            padding: 40px 20px;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
 
-        /* 背景光晕 */
-        body::before {
-            content: '';
+        /* 背景装饰 */
+        .bg-decor {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            width: 600px;
-            height: 600px;
-            transform: translate(-50%, -50%);
-            background: radial-gradient(circle,
-                    rgba(255, 180, 200, 0.12) 0%,
-                    rgba(255, 150, 170, 0.06) 30%,
-                    rgba(255, 120, 150, 0.02) 50%,
-                    transparent 70%);
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.15) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
             z-index: 0;
-            animation: glowPulse 6s ease-in-out infinite;
         }
-
-        @keyframes glowPulse {
-            0%,
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0.7;
-            }
-            30% {
-                transform: translate(-50%, -50%) scale(1.25);
-                opacity: 1;
-            }
-            60% {
-                transform: translate(-50%, -50%) scale(1.1);
-                opacity: 0.85;
-            }
-            85% {
-                transform: translate(-50%, -50%) scale(1.35);
-                opacity: 0.65;
-            }
-        }
-
-        /* Canvas 花瓣层 */
-        #petalCanvas {
+        .bg-decor-2 {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            bottom: -150px;
+            left: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 206, 201, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
             pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            position: relative;
             z-index: 1;
         }
 
-        /* 主容器 */
-        .main-container {
+        /* 问卷头部 */
+        .survey-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #fff;
+            border-radius: var(--radius);
+            padding: 40px 36px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
             position: relative;
-            z-index: 2;
+            overflow: hidden;
+        }
+        .survey-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .survey-header::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -10%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .survey-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .survey-header .description {
+            font-size: 15px;
+            opacity: 0.9;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+        }
+        .survey-header .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 问题卡片 */
+        .question-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 28px 30px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .question-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #f0f0f0;
+        }
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 700;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            color: var(--text-primary);
+        }
+        .question-title .required {
+            color: var(--danger);
+            margin-left: 4px;
+            font-size: 20px;
+        }
+
+        /* 选项样式 */
+        .option-group {
             display: flex;
             flex-direction: column;
+            gap: 12px;
+        }
+        .option-group.horizontal {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .option-item {
+            display: flex;
             align-items: center;
-            gap: 30px;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: var(--transition);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+        }
+        .option-item:hover {
+            background: #f8f7ff;
+            border-color: #e8e6ff;
+        }
+        .option-item input[type="radio"],
+        .option-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .option-item.selected {
+            background: #f0edff;
+            border-color: var(--primary-light);
         }
 
-        /* 玫瑰花整体容器 */
-        .rose-wrapper {
+        /* 文本输入 */
+        .text-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            transition: var(--transition);
+            background: #fafafa;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .text-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+        }
+        .text-input.short {
+            min-height: 50px;
+            resize: vertical;
+        }
+
+        /* 评分星星 */
+        .rating-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .rating-star {
+            font-size: 36px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: #ddd;
+            user-select: none;
+            line-height: 1;
+        }
+        .rating-star.active {
+            color: var(--warning);
+            transform: scale(1.1);
+            text-shadow: 0 2px 8px rgba(253, 203, 110, 0.5);
+        }
+        .rating-star:hover {
+            color: var(--warning);
+            transform: scale(1.05);
+        }
+
+        /* 下拉选择 */
+        .select-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23636e72' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            font-family: inherit;
+        }
+        .select-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+        }
+
+        /* 错误提示 */
+        .error-message {
+            color: var(--danger);
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 4px;
+        }
+        .error-message.show {
+            display: flex;
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* 提交按钮 */
+        .submit-btn {
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.4);
             position: relative;
-            width: 280px;
-            height: 380px;
-            filter: drop-shadow(0 10px 40px rgba(255, 140, 160, 0.35));
-            transition: filter 0.5s ease;
-            animation: roseFloat 7s ease-in-out infinite;
+            overflow: hidden;
+            margin-top: 10px;
         }
-
-        @keyframes roseFloat {
-            0%,
-            100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            15% {
-                transform: translateY(-6px) rotate(0.3deg);
-            }
-            30% {
-                transform: translateY(-2px) rotate(-0.2deg);
-            }
-            45% {
-                transform: translateY(-8px) rotate(0.5deg);
-            }
-            60% {
-                transform: translateY(2px) rotate(-0.4deg);
-            }
-            75% {
-                transform: translateY(-4px) rotate(0.15deg);
-            }
-            90% {
-                transform: translateY(0px) rotate(-0.1deg);
-            }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(108, 92, 231, 0.5);
+            background: linear-gradient(135deg, #7d6df0 0%, #5a3de8 100%);
         }
-
-        .rose-wrapper:hover {
-            filter: drop-shadow(0 15px 55px rgba(255, 130, 155, 0.55));
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
         }
-
-        /* 玫瑰花主体 */
-        .rose {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 220px;
-            height: 220px;
-            animation: breathe 5s ease-in-out infinite;
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
-
-        @keyframes breathe {
-            0%,
-            100% {
-                transform: translateX(-50%) scale(1);
-            }
-            25% {
-                transform: translateX(-50%) scale(1.04);
-            }
-            50% {
-                transform: translateX(-50%) scale(1.015);
-            }
-            75% {
-                transform: translateX(-50%) scale(1.05);
-            }
-        }
-
-        /* 花瓣基础样式 */
-        .petal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform-origin: center center;
-            border-radius: 55% 35% 50% 40% / 40% 55% 35% 50%;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        /* 花心 */
-        .rose-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 28px;
-            height: 28px;
-            background: radial-gradient(circle at 45% 40%,
-                    #9b1a1a 0%,
-                    #7a1010 40%,
-                    #5a0808 100%);
+        .submit-btn .loading-spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
             border-radius: 50%;
-            z-index: 20;
-            box-shadow:
-                inset 0 2px 6px rgba(0, 0, 0, 0.5),
-                0 0 12px rgba(180, 30, 30, 0.6),
-                0 0 25px rgba(150, 20, 20, 0.3);
-            animation: centerGlow 4s ease-in-out infinite;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .submit-btn.loading .btn-text { display: none; }
+        .submit-btn.loading .loading-spinner { display: block; }
 
-        @keyframes centerGlow {
-            0%,
-            100% {
-                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 12px rgba(180, 30, 30, 0.6), 0 0 25px rgba(150, 20, 20, 0.3);
-            }
-            50% {
-                box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 0 18px rgba(200, 25, 25, 0.75), 0 0 35px rgba(170, 15, 15, 0.4);
-            }
-        }
-
-        /* ---- 最内层花瓣 (Core) - 深红色 ---- */
-        .petal-core {
-            width: 40px;
-            height: 26px;
-            background: radial-gradient(ellipse at 55% 35%,
-                    #d43d5a 0%,
-                    #c0392b 35%,
-                    #9b1a1a 100%);
-            z-index: 16;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-        }
-        .petal-core:nth-child(1) {
-            transform: rotate(0deg) translateY(-22px) rotate(5deg);
-        }
-        .petal-core:nth-child(2) {
-            transform: rotate(72deg) translateY(-22px) rotate(-3deg);
-        }
-        .petal-core:nth-child(3) {
-            transform: rotate(144deg) translateY(-22px) rotate(8deg);
-        }
-        .petal-core:nth-child(4) {
-            transform: rotate(216deg) translateY(-22px) rotate(-6deg);
-        }
-        .petal-core:nth-child(5) {
-            transform: rotate(288deg) translateY(-22px) rotate(2deg);
-        }
-
-        /* ---- 内层花瓣 (Inner) - 深粉红 ---- */
-        .petal-inner {
-            width: 52px;
-            height: 32px;
-            background: radial-gradient(ellipse at 55% 35%,
-                    #e8707f 0%,
-                    #d43d5a 30%,
-                    #c0392b 100%);
-            z-index: 13;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-        }
-        .petal-inner:nth-child(6) {
-            transform: rotate(15deg) translateY(-36px) rotate(10deg);
-        }
-        .petal-inner:nth-child(7) {
-            transform: rotate(87deg) translateY(-36px) rotate(-8deg);
-        }
-        .petal-inner:nth-child(8) {
-            transform: rotate(159deg) translateY(-36px) rotate(5deg);
-        }
-        .petal-inner:nth-child(9) {
-            transform: rotate(231deg) translateY(-36px) rotate(-12deg);
-        }
-        .petal-inner:nth-child(10) {
-            transform: rotate(303deg) translateY(-36px) rotate(7deg);
-        }
-
-        /* ---- 中层花瓣 (Middle) - 粉色 ---- */
-        .petal-middle {
-            width: 68px;
-            height: 40px;
-            background: radial-gradient(ellipse at 55% 35%,
-                    #f290a5 0%,
-                    #e8707f 30%,
-                    #d43d5a 100%);
-            z-index: 10;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), 0 0 8px rgba(255, 150, 170, 0.2);
-        }
-        .petal-middle:nth-child(11) {
-            transform: rotate(6deg) translateY(-52px) rotate(14deg);
-        }
-        .petal-middle:nth-child(12) {
-            transform: rotate(60deg) translateY(-52px) rotate(-6deg);
-        }
-        .petal-middle:nth-child(13) {
-            transform: rotate(114deg) translateY(-52px) rotate(10deg);
-        }
-        .petal-middle:nth-child(14) {
-            transform: rotate(168deg) translateY(-52px) rotate(-10deg);
-        }
-        .petal-middle:nth-child(15) {
-            transform: rotate(222deg) translateY(-52px) rotate(8deg);
-        }
-        .petal-middle:nth-child(16) {
-            transform: rotate(276deg) translateY(-52px) rotate(-14deg);
-        }
-        .petal-middle:nth-child(17) {
-            transform: rotate(330deg) translateY(-52px) rotate(5deg);
-        }
-
-        /* ---- 外层花瓣 (Outer) - 浅粉色 ---- */
-        .petal-outer {
-            width: 85px;
-            height: 48px;
-            background: radial-gradient(ellipse at 55% 35%,
-                    #fbc0d0 0%,
-                    #f4a0b5 25%,
-                    #e8819b 70%,
-                    #e45d78 100%);
-            z-index: 7;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18), 0 0 12px rgba(255, 170, 190, 0.25);
-            border-radius: 60% 30% 55% 35% / 35% 60% 30% 55%;
-        }
-        .petal-outer:nth-child(18) {
-            transform: rotate(0deg) translateY(-70px) rotate(18deg);
-        }
-        .petal-outer:nth-child(19) {
-            transform: rotate(45deg) translateY(-70px) rotate(-5deg);
-        }
-        .petal-outer:nth-child(20) {
-            transform: rotate(90deg) translateY(-70px) rotate(12deg);
-        }
-        .petal-outer:nth-child(21) {
-            transform: rotate(135deg) translateY(-70px) rotate(-16deg);
-        }
-        .petal-outer:nth-child(22) {
-            transform: rotate(180deg) translateY(-70px) rotate(8deg);
-        }
-        .petal-outer:nth-child(23) {
-            transform: rotate(225deg) translateY(-70px) rotate(-10deg);
-        }
-        .petal-outer:nth-child(24) {
-            transform: rotate(270deg) translateY(-70px) rotate(15deg);
-        }
-        .petal-outer:nth-child(25) {
-            transform: rotate(315deg) translateY(-70px) rotate(-8deg);
-        }
-
-        /* ---- 最外层大花瓣 ---- */
-        .petal-outermost {
-            width: 100px;
-            height: 56px;
-            background: radial-gradient(ellipse at 55% 35%,
-                    #fdd8e5 0%,
-                    #fbc0d0 25%,
-                    #f4a0b5 65%,
-                    #e8819b 100%);
-            z-index: 5;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15), 0 0 16px rgba(255, 185, 200, 0.3);
-            border-radius: 65% 28% 58% 32% / 30% 62% 28% 58%;
-            animation: outerPetalSway 8s ease-in-out infinite;
-        }
-        .petal-outermost:nth-child(26) {
-            transform: rotate(10deg) translateY(-88px) rotate(22deg);
-            animation-delay: 0s;
-        }
-        .petal-outermost:nth-child(27) {
-            transform: rotate(82deg) translateY(-88px) rotate(-10deg);
-            animation-delay: 1.2s;
-        }
-        .petal-outermost:nth-child(28) {
-            transform: rotate(154deg) translateY(-88px) rotate(16deg);
-            animation-delay: 2.4s;
-        }
-        .petal-outermost:nth-child(29) {
-            transform: rotate(226deg) translateY(-88px) rotate(-20deg);
-            animation-delay: 3.6s;
-        }
-        .petal-outermost:nth-child(30) {
-            transform: rotate(298deg) translateY(-88px) rotate(12deg);
-            animation-delay: 4.8s;
-        }
-
-        @keyframes outerPetalSway {
-            0%,
-            100% {
-                transform: var(--base-transform, rotate(0deg) translateY(-88px) rotate(0deg));
-            }
-            30% {
-                transform: rotate(calc(var(--base-angle, 0deg) + 3deg)) translateY(calc(-88px + 4px)) rotate(calc(var(
-                                    --base-petal-rot,
-                                    0deg
-                                ) + 5deg));
-            }
-            60% {
-                transform: rotate(calc(var(--base-angle, 0deg) - 2deg)) translateY(calc(-88px - 3px)) rotate(calc(var(
-                                    --base-petal-rot,
-                                    0deg
-                                ) - 3deg));
-            }
-        }
-        /* 为最外层花瓣单独设置动画（使用nth-child的transform作为基础） */
-        .petal-outermost:nth-child(26) {
-            animation: outerSway0 8s ease-in-out infinite;
-        }
-        .petal-outermost:nth-child(27) {
-            animation: outerSway1 8s ease-in-out infinite;
-        }
-        .petal-outermost:nth-child(28) {
-            animation: outerSway2 8s ease-in-out infinite;
-        }
-        .petal-outermost:nth-child(29) {
-            animation: outerSway3 8s ease-in-out infinite;
-        }
-        .petal-outermost:nth-child(30) {
-            animation: outerSway4 8s ease-in-out infinite;
-        }
-
-        @keyframes outerSway0 {
-            0%,
-            100% {
-                transform: rotate(10deg) translateY(-88px) rotate(22deg);
-            }
-            30% {
-                transform: rotate(13deg) translateY(-84px) rotate(27deg);
-            }
-            60% {
-                transform: rotate(8deg) translateY(-91px) rotate(19deg);
-            }
-        }
-        @keyframes outerSway1 {
-            0%,
-            100% {
-                transform: rotate(82deg) translateY(-88px) rotate(-10deg);
-            }
-            30% {
-                transform: rotate(85deg) translateY(-84px) rotate(-5deg);
-            }
-            60% {
-                transform: rotate(80deg) translateY(-91px) rotate(-13deg);
-            }
-        }
-        @keyframes outerSway2 {
-            0%,
-            100% {
-                transform: rotate(154deg) translateY(-88px) rotate(16deg);
-            }
-            30% {
-                transform: rotate(157deg) translateY(-84px) rotate(21deg);
-            }
-            60% {
-                transform: rotate(152deg) translateY(-91px) rotate(13deg);
-            }
-        }
-        @keyframes outerSway3 {
-            0%,
-            100% {
-                transform: rotate(226deg) translateY(-88px) rotate(-20deg);
-            }
-            30% {
-                transform: rotate(229deg) translateY(-84px) rotate(-15deg);
-            }
-            60% {
-                transform: rotate(224deg) translateY(-91px) rotate(-23deg);
-            }
-        }
-        @keyframes outerSway4 {
-            0%,
-            100% {
-                transform: rotate(298deg) translateY(-88px) rotate(12deg);
-            }
-            30% {
-                transform: rotate(301deg) translateY(-84px) rotate(17deg);
-            }
-            60% {
-                transform: rotate(296deg) translateY(-91px) rotate(9deg);
-            }
-        }
-
-        /* 花萼 */
-        .sepals {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 180px;
-            height: 180px;
-            z-index: 3;
-            pointer-events: none;
-        }
-        .sepal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 30px;
-            height: 50px;
-            background: radial-gradient(ellipse at 40% 20%,
-                    #6b9e4a 0%,
-                    #4a7c3f 40%,
-                    #2d5528 100%);
-            border-radius: 20% 60% 30% 70% / 60% 30% 70% 25%;
-            transform-origin: center top;
-            z-index: 4;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }
-        .sepal:nth-child(1) {
-            transform: rotate(20deg) translateY(-60px) rotate(15deg);
-        }
-        .sepal:nth-child(2) {
-            transform: rotate(100deg) translateY(-58px) rotate(-20deg);
-        }
-        .sepal:nth-child(3) {
-            transform: rotate(180deg) translateY(-62px) rotate(10deg);
-        }
-        .sepal:nth-child(4) {
-            transform: rotate(260deg) translateY(-56px) rotate(-12deg);
-        }
-        .sepal:nth-child(5) {
-            transform: rotate(330deg) translateY(-60px) rotate(18deg);
-        }
-
-        /* 茎 */
-        .stem {
-            position: absolute;
-            top: 210px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 10px;
-            height: 140px;
-            background: linear-gradient(180deg,
-                    #5d9b4a 0%,
-                    #4a7c3f 20%,
-                    #3d6b35 50%,
-                    #2d5528 100%);
-            border-radius: 5px 6px 6px 5px;
-            z-index: 6;
-            box-shadow:
-                2px 0 4px rgba(0, 0, 0, 0.2),
-                -1px 0 2px rgba(255, 255, 255, 0.05),
-                0 0 8px rgba(80, 130, 60, 0.3);
-        }
-        .stem::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 2px;
-            width: 2px;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 1px;
-        }
-
-        /* 叶子 */
-        .leaf {
-            position: absolute;
-            z-index: 5;
-            width: 55px;
-            height: 28px;
-            background: radial-gradient(ellipse at 45% 30%,
-                    #7dbf5a 0%,
-                    #5d9b4a 35%,
-                    #3d6b35 100%);
-            border-radius: 55% 20% 45% 30% / 30% 55% 25% 50%;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-        }
-        .leaf::after {
-            content: '';
-            position: absolute;
-            top: 15%;
-            left: 20%;
-            width: 40%;
-            height: 1.5px;
-            background: rgba(30, 60, 20, 0.5);
-            border-radius: 1px;
-            transform: rotate(-5deg);
-        }
-        .leaf-left {
-            top: 260px;
-            left: 95px;
-            transform: rotate(-35deg) scaleX(1.1);
-        }
-        .leaf-right {
-            top: 295px;
-            left: 130px;
-            transform: rotate(25deg) scaleX(1.05);
-            border-radius: 20% 55% 30% 45% / 55% 30% 50% 25%;
-        }
-        .leaf-small {
-            top: 320px;
-            left: 100px;
-            width: 40px;
-            height: 22px;
-            transform: rotate(-50deg);
-            border-radius: 50% 18% 42% 28% / 28% 52% 24% 48%;
-        }
-
-        /* 刺 */
-        .thorn {
-            position: absolute;
-            z-index: 5;
-            width: 6px;
-            height: 14px;
-            background: linear-gradient(180deg, #8b6b4a 0%, #5d3d28 100%);
-            border-radius: 50% 30% 30% 50%;
-            pointer-events: none;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        .thorn:nth-child(1) {
-            top: 245px;
-            left: 135px;
-            transform: rotate(20deg);
-        }
-        .thorn:nth-child(2) {
-            top: 275px;
-            left: 142px;
-            transform: rotate(-15deg);
-            height: 11px;
-        }
-        .thorn:nth-child(3) {
-            top: 310px;
-            left: 138px;
-            transform: rotate(25deg);
-            height: 10px;
-        }
-
-        /* 文字区域 */
-        .text-container {
+        /* 成功页面 */
+        .success-screen {
+            display: none;
             text-align: center;
-            z-index: 10;
-            pointer-events: none;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 50px 30px;
+            box-shadow: var(--shadow-lg);
+            animation: fadeInUp 0.6s ease-out;
         }
-        .text-title {
-            font-size: 2rem;
-            color: #fbc0d0;
-            letter-spacing: 0.08em;
-            text-shadow: 0 0 30px rgba(255, 170, 190, 0.5), 0 0 60px rgba(255, 140, 160, 0.25);
-            animation: textShimmer 5s ease-in-out infinite;
-            font-weight: normal;
-            line-height: 1.5;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .text-subtitle {
-            font-size: 1rem;
-            color: #e8b4c0;
-            letter-spacing: 0.06em;
-            opacity: 0.8;
-            text-shadow: 0 0 15px rgba(255, 160, 180, 0.3);
-            margin-top: 4px;
-            animation: textShimmer 5s ease-in-out infinite;
-            animation-delay: 1.5s;
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), #00d2a0);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 184, 148, 0.4);
         }
-        @keyframes textShimmer {
-            0%,
-            100% {
-                opacity: 0.85;
-                text-shadow: 0 0 30px rgba(255, 170, 190, 0.5), 0 0 60px rgba(255, 140, 160, 0.25);
-            }
-            30% {
-                opacity: 1;
-                text-shadow: 0 0 40px rgba(255, 185, 200, 0.65), 0 0 75px rgba(255, 150, 170, 0.35);
-            }
-            65% {
-                opacity: 0.9;
-                text-shadow: 0 0 25px rgba(255, 160, 180, 0.45), 0 0 50px rgba(255, 130, 150, 0.2);
-            }
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #fff;
+        }
+        .success-screen h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .success-screen p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        .success-screen .btn-secondary {
+            padding: 12px 30px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-primary);
+        }
+        .success-screen .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
         }
 
         /* 响应式 */
-        @media (max-width: 768px) {
-            .rose-wrapper {
-                width: 220px;
-                height: 300px;
-                transform: scale(0.78);
-            }
-            .rose {
-                width: 220px;
-                height: 220px;
-            }
-            .text-title {
-                font-size: 1.5rem;
-            }
-            .text-subtitle {
-                font-size: 0.85rem;
-            }
-            .stem {
-                height: 110px;
-                top: 200px;
-            }
-            .leaf-left {
-                top: 240px;
-                left: 88px;
-            }
-            .leaf-right {
-                top: 268px;
-                left: 112px;
-            }
-            .leaf-small {
-                top: 290px;
-                left: 90px;
-            }
-            .thorn:nth-child(1) {
-                top: 228px;
-                left: 118px;
-            }
-            .thorn:nth-child(2) {
-                top: 252px;
-                left: 122px;
-            }
-            .thorn:nth-child(3) {
-                top: 278px;
-                left: 118px;
-            }
-        }
-        @media (max-width: 400px) {
-            .rose-wrapper {
-                width: 180px;
-                height: 250px;
-                transform: scale(0.62);
-            }
-            .text-title {
-                font-size: 1.2rem;
-            }
-            .text-subtitle {
-                font-size: 0.7rem;
-            }
-            .stem {
-                height: 90px;
-                top: 195px;
-            }
-            .leaf-left {
-                top: 225px;
-                left: 80px;
-            }
-            .leaf-right {
-                top: 248px;
-                left: 100px;
-            }
-            .leaf-small {
-                top: 265px;
-                left: 82px;
-            }
-            .thorn:nth-child(1) {
-                top: 215px;
-                left: 105px;
-            }
-            .thorn:nth-child(2) {
-                top: 235px;
-                left: 108px;
-            }
-            .thorn:nth-child(3) {
-                top: 255px;
-                left: 105px;
-            }
+        @media (max-width: 600px) {
+            body { padding: 20px 12px; }
+            .survey-header { padding: 28px 20px; }
+            .survey-header h1 { font-size: 22px; }
+            .question-card { padding: 20px 16px; }
+            .question-title { font-size: 16px; }
+            .option-group.horizontal { flex-direction: column; gap: 10px; }
+            .rating-star { font-size: 30px; }
+            .submit-btn { font-size: 16px; padding: 16px 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 花瓣飘落画布 -->
-    <canvas id="petalCanvas"></canvas>
+    <!-- 背景装饰 -->
+    <div class="bg-decor"></div>
+    <div class="bg-decor-2"></div>
 
-    <!-- 主体内容 -->
-    <div class="main-container">
-        <!-- 玫瑰花 -->
-        <div class="rose-wrapper" id="roseWrapper">
-            <!-- 花的主体 -->
-            <div class="rose" id="rose">
-                <!-- 最内层花瓣 Core -->
-                <div class="petal petal-core"></div>
-                <div class="petal petal-core"></div>
-                <div class="petal petal-core"></div>
-                <div class="petal petal-core"></div>
-                <div class="petal petal-core"></div>
-
-                <!-- 内层花瓣 Inner -->
-                <div class="petal petal-inner"></div>
-                <div class="petal petal-inner"></div>
-                <div class="petal petal-inner"></div>
-                <div class="petal petal-inner"></div>
-                <div class="petal petal-inner"></div>
-
-                <!-- 中层花瓣 Middle -->
-                <div class="petal petal-middle"></div>
-                <div class="petal petal-middle"></div>
-                <div class="petal petal-middle"></div>
-                <div class="petal petal-middle"></div>
-                <div class="petal petal-middle"></div>
-                <div class="petal petal-middle"></div>
-                <div class="petal petal-middle"></div>
-
-                <!-- 外层花瓣 Outer -->
-                <div class="petal petal-outer"></div>
-                <div class="petal petal-outer"></div>
-                <div class="petal petal-outer"></div>
-                <div class="petal petal-outer"></div>
-                <div class="petal petal-outer"></div>
-                <div class="petal petal-outer"></div>
-                <div class="petal petal-outer"></div>
-                <div class="petal petal-outer"></div>
-
-                <!-- 最外层大花瓣 -->
-                <div class="petal petal-outermost"></div>
-                <div class="petal petal-outermost"></div>
-                <div class="petal petal-outermost"></div>
-                <div class="petal petal-outermost"></div>
-                <div class="petal petal-outermost"></div>
-
-                <!-- 花心 -->
-                <div class="rose-center"></div>
+    <div class="container">
+        <!-- 问卷主体 -->
+        <div id="surveyContent">
+            <!-- 头部 -->
+            <div class="survey-header">
+                <span class="badge">📋 用户调研</span>
+                <h1>产品满意度调查问卷</h1>
+                <p class="description">感谢您抽出宝贵时间参与本次调查。您的反馈将帮助我们改进产品，提供更好的服务。本问卷大约需要3-5分钟完成，所有数据仅用于统计分析，请放心填写。</p>
             </div>
 
-            <!-- 花萼 -->
-            <div class="sepals">
-                <div class="sepal"></div>
-                <div class="sepal"></div>
-                <div class="sepal"></div>
-                <div class="sepal"></div>
-                <div class="sepal"></div>
+            <!-- 问题1：单选 -->
+            <div class="question-card" data-question="q1">
+                <div class="question-title">
+                    <span class="question-number">1</span>
+                    您的年龄段是？<span class="required">*</span>
+                </div>
+                <div class="option-group" data-type="radio">
+                    <label class="option-item">
+                        <input type="radio" name="age" value="18岁以下">
+                        <span>18岁以下</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="age" value="18-25岁">
+                        <span>18-25岁</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="age" value="26-35岁">
+                        <span>26-35岁</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="age" value="36-45岁">
+                        <span>36-45岁</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="age" value="46岁以上">
+                        <span>46岁以上</span>
+                    </label>
+                </div>
+                <div class="error-message">⚠ 请选择您的年龄段</div>
             </div>
 
-            <!-- 茎 -->
-            <div class="stem"></div>
+            <!-- 问题2：单选（满意度） -->
+            <div class="question-card" data-question="q2">
+                <div class="question-title">
+                    <span class="question-number">2</span>
+                    您对我们的产品整体满意度如何？<span class="required">*</span>
+                </div>
+                <div class="option-group" data-type="radio">
+                    <label class="option-item">
+                        <input type="radio" name="satisfaction" value="非常满意">
+                        <span>😍 非常满意</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="satisfaction" value="满意">
+                        <span>😊 满意</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="satisfaction" value="一般">
+                        <span>😐 一般</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="satisfaction" value="不满意">
+                        <span>😞 不满意</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="satisfaction" value="非常不满意">
+                        <span>😡 非常不满意</span>
+                    </label>
+                </div>
+                <div class="error-message">⚠ 请选择您的满意度</div>
+            </div>
 
-            <!-- 刺 -->
-            <div class="thorn"></div>
-            <div class="thorn"></div>
-            <div class="thorn"></div>
+            <!-- 问题3：多选 -->
+            <div class="question-card" data-question="q3">
+                <div class="question-title">
+                    <span class="question-number">3</span>
+                    您使用过哪些功能？（可多选）<span class="required">*</span>
+                </div>
+                <div class="option-group" data-type="checkbox">
+                    <label class="option-item">
+                        <input type="checkbox" name="features" value="在线聊天">
+                        <span>💬 在线聊天</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="checkbox" name="features" value="文件传输">
+                        <span>📁 文件传输</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="checkbox" name="features" value="视频会议">
+                        <span>🎥 视频会议</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="checkbox" name="features" value="云存储">
+                        <span>☁️ 云存储</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="checkbox" name="features" value="日程管理">
+                        <span>📅 日程管理</span>
+                    </label>
+                </div>
+                <div class="error-message">⚠ 请至少选择一个功能</div>
+            </div>
 
-            <!-- 叶子 -->
-            <div class="leaf leaf-left"></div>
-            <div class="leaf leaf-right"></div>
-            <div class="leaf leaf-small"></div>
+            <!-- 问题4：评分 -->
+            <div class="question-card" data-question="q4">
+                <div class="question-title">
+                    <span class="question-number">4</span>
+                    请为我们的客服服务打分<span class="required">*</span>
+                </div>
+                <div class="rating-group" data-rating="0">
+                    <span class="rating-star" data-value="1">★</span>
+                    <span class="rating-star" data-value="2">★</span>
+                    <span class="rating-star" data-value="3">★</span>
+                    <span class="rating-star" data-value="4">★</span>
+                    <span class="rating-star" data-value="5">★</span>
+                </div>
+                <input type="hidden" name="rating" value="0">
+                <div class="error-message">⚠ 请选择评分</div>
+            </div>
+
+            <!-- 问题5：下拉选择 -->
+            <div class="question-card" data-question="q5">
+                <div class="question-title">
+                    <span class="question-number">5</span>
+                    您是通过什么渠道了解到我们的？<span class="required">*</span>
+                </div>
+                <select class="select-input" name="channel">
+                    <option value="">请选择...</option>
+                    <option value="朋友推荐">朋友推荐</option>
+                    <option value="社交媒体">社交媒体</option>
+                    <option value="广告宣传">广告宣传</option>
+                    <option value="搜索引擎">搜索引擎</option>
+                    <option value="其他">其他</option>
+                </select>
+                <div class="error-message">⚠ 请选择渠道</div>
+            </div>
+
+            <!-- 问题6：文本输入 -->
+            <div class="question-card" data-question="q6">
+                <div class="question-title">
+                    <span class="question-number">6</span>
+                    您对我们有什么建议或想说的吗？
+                </div>
+                <textarea class="text-input" name="suggestion" placeholder="请输入您的建议（选填）"></textarea>
+                <div class="error-message" style="display:none;"></div>
+            </div>
+
+            <!-- 提交按钮 -->
+            <button class="submit-btn" id="submitBtn">
+                <span class="btn-text">提 交 问 卷</span>
+                <span class="loading-spinner"></span>
+            </button>
         </div>
 
-        <!-- 文字 -->
-        <div class="text-container">
-            <h1 class="text-title">为你绽放</h1>
-            <p class="text-subtitle">每一片花瓣，都是一句温柔的告白</p>
+        <!-- 成功页面 -->
+        <div class="success-screen" id="successScreen">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+            </div>
+            <h2>提交成功！</h2>
+            <p>感谢您的宝贵反馈，您的意见对我们非常重要。</p>
+            <button class="btn-secondary" id="resetBtn">填写新问卷</button>
         </div>
     </div>
 
     <script>
         (function() {
-            const canvas = document.getElementById('petalCanvas');
-            const ctx = canvas.getContext('2d');
-            const roseWrapper = document.getElementById('roseWrapper');
+            // DOM 元素
+            const surveyContent = document.getElementById('surveyContent');
+            const successScreen = document.getElementById('successScreen');
+            const submitBtn = document.getElementById('submitBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const questionCards = document.querySelectorAll('.question-card');
+            const ratingStars = document.querySelectorAll('.rating-star');
+            const ratingInput = document.querySelector('input[name="rating"]');
 
-            let width = canvas.width = window.innerWidth;
-            let height = canvas.height = window.innerHeight;
-
-            // 花瓣数组
-            let petals = [];
-            // 光点粒子数组
-            let sparkles = [];
-
-            const MAX_PETALS = 45;
-            const MAX_SPARKLES = 35;
-
-            // 获取玫瑰花在屏幕上的位置
-            function getRoseCenter() {
-                const rect = roseWrapper.getBoundingClientRect();
-                return {
-                    x: rect.left + rect.width / 2,
-                    y: rect.top + 120, // 花的主体中心大约在 wrapper 顶部下方120px
-                    width: rect.width,
-                    height: rect.height,
-                };
-            }
-
-            // 花瓣类
-            class Petal {
-                constructor(spawnFromRose = false) {
-                    this.reset(spawnFromRose);
-                }
-
-                reset(spawnFromRose = false) {
-                    if (spawnFromRose) {
-                        const rose = getRoseCenter();
-                        this.x = rose.x + (Math.random() - 0.5) * rose.width * 0.8;
-                        this.y = rose.y + (Math.random() - 0.3) * 60;
+            // 单选/多选高亮
+            function updateOptionStyle(optionItem) {
+                const input = optionItem.querySelector('input');
+                if (input.type === 'radio') {
+                    const group = optionItem.closest('.option-group');
+                    group.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+                    if (input.checked) {
+                        optionItem.classList.add('selected');
+                    }
+                } else if (input.type === 'checkbox') {
+                    if (input.checked) {
+                        optionItem.classList.add('selected');
                     } else {
-                        this.x = Math.random() * (width + 100) - 50;
-                        this.y = -40 - Math.random() * 200;
-                    }
-                    this.size = 6 + Math.random() * 16;
-                    this.rotation = Math.random() * Math.PI * 2;
-                    this.rotationSpeed = (Math.random() - 0.5) * 0.04;
-                    this.fallSpeed = 0.6 + Math.random() * 2.2;
-                    this.swayAmount = 0.3 + Math.random() * 1.8;
-                    this.swaySpeed = 0.008 + Math.random() * 0.025;
-                    this.swayOffset = Math.random() * Math.PI * 2;
-                    this.opacity = 0.55 + Math.random() * 0.45;
-                    // 颜色在粉红到深红之间
-                    const hueShift = Math.random() * 25;
-                    this.color = `hsla(${345 + hueShift}, ${65 + Math.random() * 30}%, ${55 + Math.random() * 35}%, ${this.opacity})`;
-                    this.time = Math.random() * 1000;
-                    this.windGust = 0;
-                }
-
-                update(deltaTime, mouseInfluence = 0) {
-                    this.time += deltaTime;
-                    const sway = Math.sin(this.time * this.swaySpeed + this.swayOffset) * this.swayAmount;
-                    const windEffect = this.windGust * 0.5;
-                    this.x += sway + windEffect + mouseInfluence * 0.3;
-                    this.y += this.fallSpeed;
-                    this.rotation += this.rotationSpeed;
-                    // 风逐渐衰减
-                    this.windGust *= 0.98;
-
-                    // 超出屏幕底部或两侧太远则重置
-                    if (this.y > height + 60 || this.x < -80 || this.x > width + 80) {
-                        this.reset(Math.random() < 0.2); // 20%概率从花的位置生成
+                        optionItem.classList.remove('selected');
                     }
                 }
-
-                draw(ctx) {
-                    ctx.save();
-                    ctx.translate(this.x, this.y);
-                    ctx.rotate(this.rotation);
-                    ctx.globalAlpha = this.opacity;
-
-                    // 绘制花瓣形状（泪滴/椭圆）
-                    const s = this.size;
-                    ctx.beginPath();
-                    ctx.moveTo(0, -s * 0.85);
-                    ctx.bezierCurveTo(s * 0.45, -s * 0.35, s * 0.45, s * 0.5, 0, s * 0.75);
-                    ctx.bezierCurveTo(-s * 0.45, s * 0.5, -s * 0.45, -s * 0.35, 0, -s * 0.85);
-                    ctx.closePath();
-
-                    // 填充颜色
-                    ctx.fillStyle = this.color;
-                    ctx.fill();
-
-                    // 轻微边缘发光
-                    ctx.strokeStyle = this.color.replace(/[\d.]+\)$/, '0.35)');
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-
-                    ctx.restore();
-                }
             }
 
-            // 光点粒子类
-            class Sparkle {
-                constructor() {
-                    this.reset();
-                }
-                reset() {
-                    this.x = Math.random() * width;
-                    this.y = Math.random() * height;
-                    this.size = 0.8 + Math.random() * 3.5;
-                    this.baseOpacity = 0.25 + Math.random() * 0.55;
-                    this.opacity = this.baseOpacity;
-                    this.twinkleSpeed = 0.02 + Math.random() * 0.06;
-                    this.twinkleOffset = Math.random() * Math.PI * 2;
-                    this.driftX = (Math.random() - 0.5) * 0.25;
-                    this.driftY = (Math.random() - 0.5) * 0.2;
-                    this.time = Math.random() * 1000;
-                    this.color = Math.random() < 0.6 ?
-                        `hsla(45, 85%, ${75 + Math.random() * 20}%,` :
-                        `hsla(340, 70%, ${70 + Math.random() * 25}%,`;
-                }
-                update(deltaTime) {
-                    this.time += deltaTime;
-                    this.opacity = this.baseOpacity + Math.sin(this.time * this.twinkleSpeed + this.twinkleOffset) * 0.3;
-                    this.opacity = Math.max(0.05, Math.min(1, this.opacity));
-                    this.x += this.driftX;
-                    this.y += this.driftY;
-                    if (this.x < -10) this.x = width + 10;
-                    if (this.x > width + 10) this.x = -10;
-                    if (this.y < -10) this.y = height + 10;
-                    if (this.y > height + 10) this.y = -10;
-                }
-                draw(ctx) {
-                    ctx.save();
-                    ctx.globalAlpha = this.opacity;
-                    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
-                    gradient.addColorStop(0, this.color + '1)');
-                    gradient.addColorStop(0.4, this.color + '0.6)');
-                    gradient.addColorStop(1, this.color + '0)');
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    // 核心亮点
-                    ctx.fillStyle = this.color + '0.9)';
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.restore();
-                }
-            }
-
-            // 初始化
-            function init() {
-                petals = [];
-                sparkles = [];
-                for (let i = 0; i < MAX_PETALS; i++) {
-                    const petal = new Petal(i < 8); // 前8片从花的位置生成
-                    petal.y = Math.random() * height; // 初始分散在屏幕各处
-                    petals.push(petal);
-                }
-                for (let i = 0; i < MAX_SPARKLES; i++) {
-                    sparkles.push(new Sparkle());
-                }
-            }
-
-            // 鼠标状态
-            let mouseX = width / 2;
-            let mouseY = height / 2;
-            let mouseActive = false;
-            let mouseNearRose = false;
-            let lastMouseMove = 0;
-
-            // 监听鼠标移动
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                mouseActive = true;
-                lastMouseMove = performance.now();
-
-                // 检查鼠标是否在玫瑰花附近
-                const rose = getRoseCenter();
-                const distToRose = Math.hypot(mouseX - rose.x, mouseY - rose.y);
-                mouseNearRose = distToRose < rose.width * 1.1;
+            // 监听单选/多选变化
+            document.querySelectorAll('.option-group input[type="radio"], .option-group input[type="checkbox"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    const optionItem = this.closest('.option-item');
+                    updateOptionStyle(optionItem);
+                    // 清除该问题错误
+                    const card = this.closest('.question-card');
+                    const errorMsg = card.querySelector('.error-message');
+                    if (errorMsg) {
+                        errorMsg.classList.remove('show');
+                    }
+                });
             });
 
-            document.addEventListener('mouseleave', () => {
-                mouseActive = false;
-                mouseNearRose = false;
+            // 评分系统
+            ratingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const value = parseInt(this.dataset.value);
+                    ratingInput.value = value;
+                    updateStars(value);
+                    // 清除错误
+                    const card = this.closest('.question-card');
+                    const errorMsg = card.querySelector('.error-message');
+                    if (errorMsg) errorMsg.classList.remove('show');
+                });
+                star.addEventListener('mouseenter', function() {
+                    const value = parseInt(this.dataset.value);
+                    highlightStars(value);
+                });
             });
 
-            // 触摸事件
-            document.addEventListener('touchmove', (e) => {
-                if (e.touches.length > 0) {
-                    mouseX = e.touches[0].clientX;
-                    mouseY = e.touches[0].clientY;
-                    mouseActive = true;
-                    lastMouseMove = performance.now();
-                    const rose = getRoseCenter();
-                    const distToRose = Math.hypot(mouseX - rose.x, mouseY - rose.y);
-                    mouseNearRose = distToRose < rose.width * 1.1;
-                }
-            }, { passive: true });
-
-            document.addEventListener('touchend', () => {
-                mouseActive = false;
-                mouseNearRose = false;
-            });
-
-            // 窗口大小变化
-            window.addEventListener('resize', () => {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
-                // 重新分布光点
-                sparkles.forEach(s => s.reset());
-            });
-
-            // 偶尔一阵风
-            function gustWind() {
-                const strength = (Math.random() - 0.5) * 4;
-                petals.forEach(p => {
-                    p.windGust += strength * (0.5 + Math.random());
+            function highlightStars(value) {
+                ratingStars.forEach(star => {
+                    const starValue = parseInt(star.dataset.value);
+                    if (starValue <= value) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
                 });
             }
-            setInterval(gustWind, 3000 + Math.random() * 4000);
 
-            // 动画循环
-            let lastTime = performance.now();
-            let spawnTimer = 0;
-            const SPAWN_INTERVAL = 180; // 每180ms检查是否需要生成花瓣
+            function updateStars(value) {
+                highlightStars(value);
+            }
 
-            function animate(timestamp) {
-                const deltaTime = Math.min(timestamp - lastTime, 50); // 防止大帧跳跃
-                lastTime = timestamp;
+            // 重置评分时恢复
+            document.querySelector('.rating-group').addEventListener('mouseleave', function() {
+                const currentValue = parseInt(ratingInput.value) || 0;
+                updateStars(currentValue);
+            });
 
-                ctx.clearRect(0, 0, width, height);
+            // 下拉选择变化时清除错误
+            document.querySelectorAll('.select-input').forEach(select => {
+                select.addEventListener('change', function() {
+                    const card = this.closest('.question-card');
+                    const errorMsg = card.querySelector('.error-message');
+                    if (errorMsg && this.value !== '') {
+                        errorMsg.classList.remove('show');
+                    }
+                });
+            });
 
-                // 鼠标影响力（随时间衰减）
-                const timeSinceMouse = timestamp - lastMouseMove;
-                const mouseInfluence = mouseActive && timeSinceMouse < 2000 ?
-                    (1 - timeSinceMouse / 2000) * (mouseNearRose ? 2.5 : 0.6) :
-                    0;
+            // 文本输入无需强制清除错误，但可以监听输入
+            document.querySelectorAll('.text-input').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    const card = this.closest('.question-card');
+                    const errorMsg = card.querySelector('.error-message');
+                    if (errorMsg && this.value.trim() !== '') {
+                        errorMsg.classList.remove('show');
+                    }
+                });
+            });
 
-                // 鼠标靠近花时，额外生成花瓣
-                if (mouseNearRose && mouseActive) {
-                    spawnTimer += deltaTime;
-                    if (spawnTimer > SPAWN_INTERVAL && petals.length < MAX_PETALS + 15) {
-                        spawnTimer = 0;
-                        const newPetal = new Petal(true);
-                        petals.push(newPetal);
-                        // 限制总数
-                        if (petals.length > MAX_PETALS + 20) {
-                            petals.shift();
+            // 验证单个问题
+            function validateQuestion(card) {
+                const type = card.dataset.question;
+                const errorMsg = card.querySelector('.error-message');
+                if (!errorMsg) return true; // 没有错误消息元素，视为选填
+
+                let isValid = true;
+
+                // 检查是否为必填
+                const requiredMark = card.querySelector('.required');
+                if (!requiredMark) return true; // 没有必填标记，跳过验证
+
+                // 单选
+                const radioInputs = card.querySelectorAll('input[type="radio"]');
+                if (radioInputs.length > 0) {
+                    const anyChecked = Array.from(radioInputs).some(r => r.checked);
+                    if (!anyChecked) {
+                        errorMsg.classList.add('show');
+                        isValid = false;
+                    } else {
+                        errorMsg.classList.remove('show');
+                    }
+                }
+
+                // 多选
+                const checkboxInputs = card.querySelectorAll('input[type="checkbox"]');
+                if (checkboxInputs.length > 0) {
+                    const anyChecked = Array.from(checkboxInputs).some(c => c.checked);
+                    if (!anyChecked) {
+                        errorMsg.classList.add('show');
+                        isValid = false;
+                    } else {
+                        errorMsg.classList.remove('show');
+                    }
+                }
+
+                // 评分
+                const ratingInputInCard = card.querySelector('input[name="rating"]');
+                if (ratingInputInCard && parseInt(ratingInputInCard.value) === 0) {
+                    errorMsg.classList.add('show');
+                    isValid = false;
+                } else if (ratingInputInCard) {
+                    errorMsg.classList.remove('show');
+                }
+
+                // 下拉选择
+                const selectInput = card.querySelector('.select-input');
+                if (selectInput && selectInput.value === '') {
+                    errorMsg.classList.add('show');
+                    isValid = false;
+                } else if (selectInput) {
+                    errorMsg.classList.remove('show');
+                }
+
+                // 文本输入（必填的话，但这里没有必填文本，所以略）
+                // 如果有必填文本可以在这里添加
+
+                return isValid;
+            }
+
+            // 验证所有问题
+            function validateAll() {
+                let allValid = true;
+                questionCards.forEach(card => {
+                    if (!validateQuestion(card)) {
+                        allValid = false;
+                        // 滚动到第一个错误
+                        if (allValid === false && !card.classList.contains('error-shown')) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            card.classList.add('error-shown');
+                            setTimeout(() => card.classList.remove('error-shown'), 1000);
                         }
                     }
-                } else {
-                    spawnTimer = 0;
-                    // 逐渐移除多余花瓣
-                    if (petals.length > MAX_PETALS) {
-                        petals.pop();
-                    }
-                }
-
-                // 更新和绘制光点
-                sparkles.forEach(s => {
-                    s.update(deltaTime);
-                    s.draw(ctx);
                 });
-
-                // 更新和绘制花瓣
-                petals.forEach(p => {
-                    p.update(deltaTime, mouseInfluence);
-                    p.draw(ctx);
-                });
-
-                // 如果花瓣太少，补充
-                if (petals.length < MAX_PETALS - 5 && !mouseNearRose) {
-                    petals.push(new Petal(false));
-                }
-
-                requestAnimationFrame(animate);
+                return allValid;
             }
 
-            // 启动
-            init();
-            requestAnimationFrame(animate);
+            // 提交
+            submitBtn.addEventListener('click', function() {
+                if (submitBtn.classList.contains('loading')) return;
 
-            // 点击玫瑰花触发更多花瓣
-            roseWrapper.addEventListener('click', (e) => {
-                const rose = getRoseCenter();
-                const burstCount = 12;
-                for (let i = 0; i < burstCount; i++) {
-                    const petal = new Petal(true);
-                    petal.x = rose.x + (Math.random() - 0.5) * 80;
-                    petal.y = rose.y + (Math.random() - 0.5) * 50;
-                    petal.fallSpeed = 1.5 + Math.random() * 3;
-                    petal.swayAmount = 1 + Math.random() * 3;
-                    petal.rotationSpeed = (Math.random() - 0.5) * 0.12;
-                    petal.opacity = 0.7 + Math.random() * 0.3;
-                    petal.size = 5 + Math.random() * 14;
-                    petal.windGust = (Math.random() - 0.5) * 6;
-                    petals.push(petal);
+                // 先验证
+                if (!validateAll()) {
+                    // 轻微抖动提示
+                    return;
                 }
-                // 限制总数
-                while (petals.length > MAX_PETALS + 30) {
-                    petals.shift();
-                }
+
+                // 模拟提交
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+
+                setTimeout(() => {
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                    // 显示成功
+                    surveyContent.style.display = 'none';
+                    successScreen.style.display = 'block';
+                    // 滚动到顶部
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 1500);
             });
 
-            // 移动端也支持点击
-            roseWrapper.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                roseWrapper.click();
+            // 重置问卷
+            resetBtn.addEventListener('click', function() {
+                // 重置所有表单
+                const formElements = document.querySelectorAll('input[type="radio"], input[type="checkbox"], .select-input, .text-input');
+                formElements.forEach(el => {
+                    if (el.type === 'radio' || el.type === 'checkbox') {
+                        el.checked = false;
+                    } else if (el.tagName === 'SELECT') {
+                        el.value = '';
+                    } else if (el.tagName === 'TEXTAREA') {
+                        el.value = '';
+                    }
+                });
+
+                // 重置评分
+                ratingInput.value = '0';
+                updateStars(0);
+
+                // 清除高亮
+                document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+
+                // 清除所有错误
+                document.querySelectorAll('.error-message').forEach(msg => msg.classList.remove('show'));
+
+                // 显示问卷
+                successScreen.style.display = 'none';
+                surveyContent.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
-            console.log('🌹 玫瑰花已为你绽放 ~');
-            console.log('💡 提示：点击花朵会有花瓣飘落效果哦！');
-            console.log('✨ 移动鼠标靠近花朵也会有惊喜~');
+            // 初始化评分显示
+            updateStars(0);
+
+            // 防止意外提交
+            console.log('📋 问卷已加载，所有必填项验证就绪');
         })();
     </script>
 </body>
